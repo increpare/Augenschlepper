@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link rel="shortcut icon" href="favicon.ico"/>
+
+
+	<title>Galaktisches Etymologieforschungsinstitut</title>
+
+
+	<style>	
+		:root {
+		 /* --bg: #0471b6;
+		  --fg: #7bc8ff;
+		  --fg-faint: #107cc5;*/
+
+		  --bg: white;
+		  --fg: black;
+		  --fg-faint: rgba(1,1,1,0.2);
+		  --bg-mauerfüllung : white;
+		}
+
+		body{
+			background-color: var(--bg);
+			width: 100%;
+			margin: 0;
+			padding:0;
+			overflow: hidden;;
+			text-align: center;
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+
+		}
+  
+		svg {
+			 position:fixed; 
+			 top:0; 
+			 left:0; 
+			 height:100%; 
+			 width:100%
+		}
+		
+		.auge_leer{
+			fill:var(--bg);
+			stroke:var(--fg);
+		}
+		
+		.feuer{
+			fill:var(--fg);
+			stroke:none;
+			stroke-miterlimit:10;
+		}
+		
+		.spieler_innen {
+			fill:none;
+			stroke:var(--fg);
+			stroke-linecap:round;
+			stroke-miterlimit:10;
+		}
+
+
+		.spieler_auserer_feuerrand {
+			stroke:var(--fg);
+			stroke-width:3;
+			stroke-miterlimit:10;
+			stroke-linecap: round;
+		}
+
+		.spieler_auserer_feuerrand_innen {
+			stroke:var(--bg);
+			stroke-width:2;
+			stroke-miterlimit:10;
+			stroke-linecap: round;
+		}
+
+		.raster {
+			stroke:var(--fg);
+			stroke-width:0.2;
+			/*stroke-dasharray:0.2;*/
+		}
+
+		.raster-sub {
+			stroke:var(--fg-faint);
+			stroke-width:0.2;
+			/*stroke-dasharray:0.2;*/
+		}
+
+		.mauer {
+			stroke:var(--fg);
+			stroke-width:0.5;
+			fill:url(#diagonalHatch);
+			fill-rule: evenodd;
+		}
+
+		.hatchfill{
+			stroke:none;
+			fill:var(--bg-mauerfüllung);
+		}
+
+		.hatchstroke{
+			stroke:var(--fg-faint); 
+			stroke-width:0.3;
+		}
+
+	</style>
+
+</head>
+
+<body>
+
+<script>
+
+
+var level=0;
+
+var entitäten=[];
+
+var levels = [
+	[
+		"#########",
+		"#....S#.#",
+		"#.###.#.#",
+		"#.#.#.#..",
+		"#.###.#.#",
+		"#F..o.#..",
+		"#######.#",
+		"...##T.o#",
+		"#.#...###",
+		"#.##.##.#",
+	],
+	[
+		"###.",
+		"#.#.",
+		"###.",
+		"....",
+		"....."
+	],
+	[
+		"##..",
+		".##.",
+		"....",
+		"....",
+		"....."
+	],
+
+]
+
+var leveloff_x=0;
+var leveloff_y=0;
+var level_grid_s=0;
+
+var sprache="DE";
+
+function S(de,en){
+	if (sprache==="DE"){
+		return de;
+	} else {
+		return en;
+	}
+}
+
+var gameName="pipschlepper"
+function setVal(key,val){
+	if (typeof(Storage) !== "undefined") {
+	    localStorage.setItem(gameName+key,val);
+	}
+}
+
+let f = x => x*2
+
+function getVal(key, default_val){
+	if (typeof(Storage) !== "undefined") {
+	    let val = localStorage.getItem(gameName+key);
+	    if (val===null){
+	    	return default_val;
+	    } else {
+	    	return val;
+	    }
+	} else {
+    	return default_val;
+	}
+}
+
+
+	let keyAllowed = {};
+
+	function onFocus(e){
+		keyAllowed = {};
+	}
+
+	function onKeyup(e){
+		keyAllowed [e.which] = true;
+	}
+
+	function onTitelInput(k){
+
+	}
+
+	function onSpielInput(k){
+
+	}
+
+	function onInput(k){
+		if (k===6&&gameState!=="TITEL"){
+			setGameState("TITEL");
+			return;
+		}
+		switch(gameState){
+			case "TITEL":
+			onTitelInput(k);
+			break;
+			case "SPIEL":
+			onSpielInput(k);
+			break;
+		}
+	}
+
+	function checkKey(e) {
+	    e = e || window.event;
+
+		if (keyAllowed [e.which] === false) {
+			if (e.keyCode == '88' || e.keyCode =='32'||e.keyCode =='13'||e.keyCode =='68'){
+				return;
+			}
+		}
+		keyAllowed [e.which] = false;
+		 
+	    if (e.keyCode == '38') {
+	        // up arrow
+	    	onInput(0);
+	    	e.preventDefault();
+	    }
+	    else if (e.keyCode == '40') {
+	        // down arrow
+	    	onInput(1);
+	    	e.preventDefault();
+	    }
+	    else if (e.keyCode == '37') {
+	       // left arrow
+	    	onInput(2);
+	    	e.preventDefault();
+	    }
+	    else if (e.keyCode == '39') {
+	       // right arrow
+	    	onInput(3);
+	    	e.preventDefault();
+	    } else if (e.keyCode == '88' || e.keyCode =='32'||e.keyCode =='13'||e.keyCode =='68'){
+	    	onInput(4);
+	    	e.preventDefault();
+	    } else if (e.keyCode=='90'||e.keyCode=='85'){
+	    	onInput(5);
+	    } else if (e.keyCode=='27'){
+	    	onInput(6);
+	    } else if (e.keyCode=='72'){
+	    	onInput(7);
+	    } else if (e.keycode=='88'){
+	    	onInput(8);
+	    } 
+	    render();
+
+	}
+
+	function render(){
+		switch(gameState){
+			case "TITEL":
+				renderTitel();
+				break;
+			case "SPIEL":
+				renderSpiel();
+				break;
+		}
+	}
+
+	function renderTitel(){
+
+	}
+
+	function GuteKoordinate(mauermaske){
+		var x=-1;
+		var y=-1;
+		for (var j=0;j<mauermaske.length;j++){
+			var zeile=mauermaske[j];
+			for (var i=0;i<zeile.length;i++){
+				if (zeile[i]===1){
+					x=i;
+					y=j;
+					break;
+				}
+			}
+		}
+
+		while (x>0){
+			if (zeile[y][x-1]===1){
+				x--;
+			} else {
+				break;
+			}
+		}
+
+		return [x,y];
+	}
+
+	function rotUZS(n){
+		switch(n){
+			case 0://up
+				return 3;
+			case 1://down
+				return 2;
+			case 2://left
+				return 0;
+			case 3://right
+				return 1;
+		}
+	}
+
+	function rotGUZS(n){
+		switch(n){
+			case 0://up
+				return 2;
+			case 1://down
+				return 3;
+			case 2://left
+				return 1;
+			case 3://right
+				return 0;
+		}
+	}
+
+	function nebenKoord(x,y,d){//right von der punkt
+		switch(d){
+			case 0://u
+				return [x,y-1];
+			break;
+			case 1://d
+				return [x-1,y];
+			break;
+			case 2://l
+				return [x-1,y-1];
+			break;
+			case 3://r
+				return [x,y];
+			break;
+		}
+	}
+
+	function dirToDelta(d){
+		switch(d){
+			case 0://u
+				return [0,-1];
+			break;
+			case 1://d
+				return [0,1];
+			break;
+			case 2://l
+				return [-1,0];
+			break;
+			case 3://r
+				return [1,0];
+			break;
+		}
+	}
+
+	function getPunkt(x,y,raster){
+		if (x<0||y<0||x>=raster[0].length||y>=raster.length){
+			return 0;
+		}
+		return raster[y][x];
+	}
+
+
+	function removeKante(kante,kanten){
+		for (var i=0;i<kanten.length;i++){
+			var k = kanten[i];
+			if (k[0]===kante[0]&&k[1]===kante[1]&&k[2]===kante[2]){
+				kanten.splice(i,1);
+				return;
+			}
+		}
+		console.log("error kante not found")
+	}
+	function Konturausrechnung(ebene,sx,sy,sdir,kanten){
+		var x = sx;
+		var y = sy;
+
+		var dir = sdir;
+
+		var coords=[[x,y,dir]];
+		//im Uhrzeigersinn
+		do {
+
+			let [dx,dy]=dirToDelta(dir);
+			
+			var [nx,ny] = nebenKoord(x,y,dir);
+			removeKante([nx,ny,rotGUZS(dir)],kanten);
+
+			x+=dx;
+			y+=dy;
+			var ldir = rotGUZS(dir)
+			
+			var [nk_l_x,nk_l_y]=nebenKoord(x,y,ldir);
+			
+			var [nk_x,nk_y]=nebenKoord(x,y,dir);
+
+			if (getPunkt(nk_l_x,nk_l_y,ebene)===1){
+				dir=ldir;				
+			} else if (getPunkt(nk_x,nk_y,ebene)===1){
+				//dir=gleich
+			} else {
+				dir = rotUZS(dir);
+			}
+
+			coords.push([x,y,dir]);
+		} while (x!=sx || y!=sy || dir!=sdir)
+
+		return coords;
+	}
+
+	function Kanten(mauermaske){
+		var result=[];
+		for (var j=0;j<mauermaske.length;j++){
+			var zeile=mauermaske[j];
+			for (var i=0;i<zeile.length;i++){
+				var c = zeile[i];
+				if (c===0){
+					continue;
+				}
+				var c_oben = getPunkt(i,j-1,mauermaske);
+				var c_unten = getPunkt(i,j+1,mauermaske);
+				var c_links = getPunkt(i-1,j,mauermaske);
+				var c_rechts = getPunkt(i+1,j,mauermaske);
+				if (c_oben===0){
+					result.push([i,j,0]);
+				}
+				if (c_unten===0){
+					result.push([i,j,1]);
+				}
+				if (c_links===0){
+					result.push([i,j,2]);
+				}
+				if (c_rechts===0){
+					result.push([i,j,3]);
+				}
+			}
+		}
+		return result;
+	}
+
+	function MauerTrennen(curlevel){
+
+		var level_b=curlevel[0].length;
+		var level_h=curlevel.length;
+
+		var counter=0;
+		var flutfüllung=[];
+
+		for (var j=0;j<level_h;j++){
+			var zeile=[]
+			for (var i=0;i<level_b;i++){
+				if (curlevel[j].charAt(i)=="#"){
+					zeile.push(counter);
+					counter++;
+				} else {
+					zeile.push(-1);
+				}
+			}			
+			flutfüllung.push(zeile);
+		}
+
+		//flutfüllen
+		var geändert=true;
+		while(geändert){
+			geändert=false;
+
+			for (var i=0;i<level_b;i++){
+				for (var j=0;j<level_h;j++){
+					var p1 = flutfüllung[j][i];
+					if (p1 === -1){
+						continue;
+					}
+
+					if (i+1<level_b){
+						var p2 = flutfüllung[j][i+1];
+						if (p2>=0 && p2!==p1){
+							var min = p1<p2?p1:p2;
+							flutfüllung[j][i]=min;
+							flutfüllung[j][i+1]=min;
+							geändert=true;
+						}
+					}
+
+					if (j+1<level_h){
+						var p2 = flutfüllung[j+1][i];
+						if (p2>=0 && p2!==p1){
+							var min = p1<p2?p1:p2;
+							flutfüllung[j][i]=min;
+							flutfüllung[j+1][i]=min;
+							geändert=true;
+						}
+					}
+
+					//schräg
+					// if (i+1<level_b && j+1<level_h){
+					// 	var p2 = flutfüllung[j+1][i+1];
+					// 	if (p2>=0 && p2!==p1){
+					// 		var min = p1<p2?p1:p2;
+					// 		flutfüllung[j][i]=min;
+					// 		flutfüllung[j+1][i+1]=min;
+					// 		geändert=true;
+					// 	}
+					// }
+				}
+			}
+		}
+		console.log(flutfüllung);
+		var getrennt=[];
+		for (var c=0;c<counter;c++){
+			var indexGefunden=false;
+			var ebene=[];
+
+			for (var j=0;j<level_h;j++){
+				var zeile=[]
+				for (var i=0;i<level_b;i++){
+					if (flutfüllung[j][i]==c){
+						zeile.push(1);
+						indexGefunden=true;
+					} else {
+						zeile.push(0);
+					}
+				}			
+				ebene.push(zeile);
+			}
+
+			if (indexGefunden){
+				getrennt.push(ebene);
+			}
+		}
+
+
+		console.log(getrennt);
+		var konturen=[];
+		for ( var i=0;i<getrennt.length;i++ ){
+			var ebene = getrennt[i];
+			console.log(ebene);
+			var kanten = Kanten(ebene);
+
+			while(kanten.length>0){
+				let [x,y,dir]=kanten[0];
+				dir = rotUZS(dir);
+				switch(dir){
+					case 0:
+					y++;
+					break;
+					case 1:
+					x++;
+					break;
+					case 2:
+					x++;
+					y++;
+					break;
+					case 3:
+					break;
+				}
+				var ol = kanten.length;
+				var linie = Konturausrechnung(ebene,x,y,dir,kanten);
+				konturen.push(linie);
+				console.log("KL",ol,kanten.length);
+				if (kanten.length===ol){
+					break;
+				}
+			}
+		}
+		return konturen;
+	}
+
+	function linksvon(dir1,dir2){
+		return rotUZS(dir1)===dir2;
+	}
+	function rechtsvon(dir1,dir2){
+		return rotGUZS(dir1)===dir2;
+	}
+
+	function renderSpiel(){
+
+		var curlevel=levels[level];
+
+		var level_b=curlevel[0].length;
+		var level_h=curlevel.length;
+
+		var linie_b=1;
+
+		var o_bildschirm_rand_x=linie_b/2;
+		var o_bildschirm_rand_y=linie_b/2;
+
+		var o_bildschirm_zelle_g_b=12;
+		var o_bildschirm_zelle_g_h=12;
+
+		var o_spielplatz_b=level_b*o_bildschirm_zelle_g_b;
+		var o_spielplatz_h=level_h*o_bildschirm_zelle_g_h;
+
+		var o_screen_b=o_spielplatz_b+2*o_bildschirm_rand_x;
+		var o_screen_h=o_spielplatz_h+2*o_bildschirm_rand_y;
+
+
+		var svg=`
+<svg id="console" viewBox="0 0 ${o_screen_b} ${o_screen_h}" xmlns="http://www.w3.org/2000/svg">
+
+<defs> 
+
+<pattern id="diagonalHatch" width="0.1em" height="0.1em" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+  <rect x="0" y="0" width="1em" height="1em" class="hatchfill"/>
+  <line x1="0" y1="0" x2="0" y2="10" class="hatchstroke" />
+</pattern>
+
+</defs>
+
+`
+
+// svg+=`
+// <rect x="${o_bildschirm_rand_x}" y="${o_bildschirm_rand_x}" width="${o_spielplatz_b}" height="${o_spielplatz_h}" style="fill:${farbe_bg};stroke-width:3;stroke:${farbe_linie}" />`
+
+// svg+=`
+// <polygon points="100,10 40,198 190,78 10,78 160,198" style="fill:lime;stroke:purple;stroke-width:5;fill-rule:nonzero;"/>
+// `;
+	
+		//rasterlinien
+		for (var i=0;i<=level_b;i++){
+			var lx_1 = o_bildschirm_rand_x+o_bildschirm_zelle_g_b*i;
+			var ly_1 = o_bildschirm_rand_y;
+			var lx_2 = o_bildschirm_rand_x+o_bildschirm_zelle_g_b*i;
+			var ly_2 = o_bildschirm_rand_y+o_bildschirm_zelle_g_h*level_h;
+
+			// if (i>0)
+			{
+				svg+=`<line x1="${lx_1}" y1="${ly_1}" x2="${lx_2}" y2="${ly_2}" class="raster" />`
+			}
+			if (i<level_b){
+				for (var j=1;j<6;j++){
+					lx_1+=o_bildschirm_zelle_g_b*1/6
+					lx_2+=o_bildschirm_zelle_g_h*1/6
+					svg+=`<line x1="${lx_1}" y1="${ly_1}" x2="${lx_2}" y2="${ly_2}" class="raster-sub" />`
+				}
+			}
+		}
+		for (var j=0;j<=level_h;j++){
+			var lx_1 = o_bildschirm_rand_x;
+			var ly_1 = o_bildschirm_rand_y+o_bildschirm_zelle_g_h*j;
+			var lx_2 = o_bildschirm_rand_x+o_bildschirm_zelle_g_b*level_b;
+			var ly_2 = o_bildschirm_rand_y+o_bildschirm_zelle_g_h*j;
+
+			// if (j>0)
+			{
+				svg+=`<line x1="${lx_1}" y1="${ly_1}" x2="${lx_2}" y2="${ly_2}" class="raster" />`
+			}		
+			if (j<level_h){
+				for (var i=1;i<6;i++){
+					ly_1+=o_bildschirm_zelle_g_b*1/6
+					ly_2+=o_bildschirm_zelle_g_h*1/6
+					svg+=`<line x1="${lx_1}" y1="${ly_1}" x2="${lx_2}" y2="${ly_2}" class="raster-sub" />`
+				}
+			}
+		}
+
+
+		var konturen = MauerTrennen(curlevel);
+		let path = `<path class="mauer" d="`;
+		for (var i=0;i<konturen.length;i++){
+			var kontur=konturen[i];
+			var letzte_x=0;
+			var letzte_y=0;
+			var letzte_dir=0;
+				for (var j=0;j<kontur.length;j++){
+					var punkt=kontur[j];
+					var dir = punkt[2];
+					var px = punkt[0]*12+o_bildschirm_rand_x;
+					var py = punkt[1]*12+o_bildschirm_rand_y;
+					var tx = 0;
+					var ty = 0;
+					switch(dir){
+						case 0:
+							px++;
+							py-=2;
+							tx=px;
+							ty=py-8;
+							break;
+						case 1:
+							px--;
+							py+=2;
+							tx=px;
+							ty=py+8;
+							break;
+						case 2:
+							px-=2;
+							py--;
+							tx=px-8;
+							ty=py;
+							break;
+						case 3:
+							px+=2;
+							py++;
+							tx=px+8;
+							ty=py;
+							break;
+					}
+					if (j===0){
+						path+=`M${px} ${py} L${tx} ${ty}`;
+					} else {
+						if (letzte_dir===dir){
+							path+=` L${px} ${py} L${tx} ${ty}`;
+						} else if(linksvon(dir,letzte_dir)){
+
+							let [dx,dy]= dirToDelta(dir);
+							let [letzte_dx,letzte_dy]= dirToDelta(letzte_dir);
+							
+							var nudge_letzte_dx = letzte_x+2*letzte_dx;
+							var nudge_letzte_dy = letzte_y+2*letzte_dy;
+
+							var nudge_px = px-2*dx;
+							var nudge_py = py-2*dy;
+
+							path+=` L${nudge_letzte_dx} ${nudge_letzte_dy} A 1 1 0 0 0 ${nudge_px} ${nudge_py} L${tx} ${ty}`;
+							//concave
+						} else {
+							//convex
+							path+=` A 1 1 0 0 1 ${px} ${py} L${tx} ${ty}`;
+						}
+					}
+					letzte_x=tx;
+					letzte_y=ty;
+					letzte_dir=dir;
+				}
+
+
+		}
+			path+=` Z"/>`;
+			svg+=path;
+		//Entitäten
+		for (var i=0;i<entitäten.length;i++){
+			var entität=entitäten[i];
+			var ox=o_bildschirm_rand_x+o_bildschirm_zelle_g_b*entität[1];
+			var oy=o_bildschirm_rand_y+o_bildschirm_zelle_g_h*entität[2];
+			svg+=`<g class="#${entität[0]}" transform="translate(${ox},${oy})">
+`
+			switch(entität[0]){
+				case "F"://FEUER
+					svg+=`
+					<path class="feuer" d="M1,6a4.72,4.72,0,0,0,5,5,4.72,4.72,0,0,0,5-5,7.65,7.65,0,0,0-1-4S8.85,6,8,6,6,2,6,2,4.85,6,4,6,2,2,2,2A7.77,7.77,0,0,0,1,6Z"/>
+					`;
+				break;
+				case "S"://SPIELER
+				svg+=`
+					<line class="spieler_innen" x1="5" y1="3" x2="7" y2="3"/>
+					<line class="spieler_innen" x1="4" y1="9" x2="6" y2="6.43"/>
+					<line class="spieler_innen" x1="8" y1="9" x2="6" y2="6.43"/>
+					<line class="spieler_innen" x1="6" y1="3.86" x2="3" y2="5.57"/>
+					<line class="spieler_innen" x1="9" y1="5.57" x2="6" y2="3.86"/>
+					<line class="spieler_innen" x1="6" y1="6.43" x2="6" y2="3"/>
+				`
+				break;	
+				case "o"://Auge
+				svg+=`
+					<circle class="auge_leer" cx="6" cy="6" r="3"  />
+					`
+				break;		
+				case "T":
+				svg+=`
+					<line class="spieler_auserer_feuerrand" x1="5" y1="3" x2="7" y2="3"/>
+					<line class="spieler_auserer_feuerrand" x1="4" y1="9" x2="6" y2="6.43"/>
+					<line class="spieler_auserer_feuerrand" x1="8" y1="9" x2="6" y2="6.43"/>
+					<line class="spieler_auserer_feuerrand" x1="6" y1="3.86" x2="3" y2="5.57"/>
+					<line class="spieler_auserer_feuerrand" x1="9" y1="5.57" x2="6" y2="3.86"/>
+					<line class="spieler_auserer_feuerrand" x1="6" y1="6.43" x2="6" y2="3"/>
+					<line class="spieler_auserer_feuerrand" x1="5" y1="3" x2="7" y2="3"/>
+
+
+					<line class="spieler_auserer_feuerrand_innen" x1="5" y1="3" x2="7" y2="3"/>
+					<line class="spieler_auserer_feuerrand_innen" x1="4" y1="9" x2="6" y2="6.43"/>
+					<line class="spieler_auserer_feuerrand_innen" x1="8" y1="9" x2="6" y2="6.43"/>
+					<line class="spieler_auserer_feuerrand_innen" x1="6" y1="3.86" x2="3" y2="5.57"/>
+					<line class="spieler_auserer_feuerrand_innen" x1="9" y1="5.57" x2="6" y2="3.86"/>
+					<line class="spieler_auserer_feuerrand_innen" x1="6" y1="6.43" x2="6" y2="3"/>
+					<line class="spieler_auserer_feuerrand_innen" x1="5" y1="3" x2="7" y2="3"/>
+
+
+					<line class="spieler_innen" x1="4" y1="9" x2="6" y2="6.43"/>
+					<line class="spieler_innen" x1="8" y1="9" x2="6" y2="6.43"/>
+					<line class="spieler_innen" x1="6" y1="3.86" x2="3" y2="5.57"/>
+					<line class="spieler_innen" x1="9" y1="5.57" x2="6" y2="3.86"/>
+					<line class="spieler_innen" x1="6" y1="6.43" x2="6" y2="3"/>
+					<line class="spieler_innen" x1="5" y1="3" x2="7" y2="3"/>
+
+				`//FEUERSPIELER
+				break;		
+			}
+
+			svg+="</g>"
+		}
+	svg+=`Sorry, your browser does not support inline SVG and so you can't play this game sadface.</svg>`;
+
+	document.body.innerHTML=svg;
+	}
+
+	function startSpiel(){
+		entitäten=[];
+
+		var curlevel=levels[level];
+		var level_b=curlevel[0].length;
+		var level_h=curlevel.length;
+
+
+		for (var i=0;i<level_b;i++){
+			for (var j=0;j<level_h;j++){
+				var c = curlevel[j].charAt(i);
+				switch(c){
+					case "#":
+					//Mauer. Ignoriere es.
+					break;
+					case "S":
+					//Spieler
+					entitäten.push(["S",i,j]);
+					break;
+					case "F":
+					//Spieler
+					entitäten.push(["F",i,j]);
+					break;
+					case "o":
+					//Auge
+					entitäten.push(["o",i,j]);
+					break;
+					case "T":
+					//Spieler
+					entitäten.push(["T",i,j]);
+					break;
+				}
+			}
+		}
+	}
+
+	function startTitel(){
+
+	}
+
+	let gameState="";
+	function setGameState(newgs){
+		gameState=newgs;
+		switch(newgs){
+			case "TITEL":
+				startTitel();
+				break;
+			case "SPIEL":
+				startSpiel();
+				break;
+		}
+		render();
+	}
+
+	function globalSetup(){
+
+		document.title = S("Augeschlepper","Pip Schlepper");
+		
+		document.onkeydown = checkKey;	
+		document.onkeyup = onKeyup;	
+		document.onfocus = onFocus;	
+		level=0;
+
+		setGameState("SPIEL")
+
+
+	}
+
+	window.onload =globalSetup;
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<html><head>
+	<meta charset="UTF-8">
+	<link rel="shortcut icon" href="favicon.ico">
+
+
+	<title>Augeschlepper</title>
+
+
+	<style>	
+		:root {
+		 /* --bg: #0471b6;
+		  --fg: #7bc8ff;
+		  --fg-faint: #107cc5;*/
+
+		  --bg: white;
+		  --fg: black;
+		  --fg-faint: lightgray;
+		  --bg-mauerfüllung : white;
+		}
+
+		body{
+			background-color: var(--bg);
+			width: 100%;
+			margin: 0;
+			padding:0;
+			overflow: hidden;;
+			text-align: center;
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+
+		}
+  
+		svg {
+			 position:fixed; 
+			 top:0; 
+			 left:0; 
+			 height:100%; 
+			 width:100%
+		}
+		
+		.feuer{
+			fill:var(--fg);
+			stroke:none;
+			stroke-miterlimit:10;
+		}
+		
+		.spieler_innen {
+			fill:none;
+			stroke:var(--fg);
+			stroke-linecap:round;
+			stroke-miterlimit:10;
+		}
+
+
+		.spieler_auserer_feuerrand {
+			stroke:var(--fg);
+			stroke-width:3;
+			stroke-miterlimit:10;
+			stroke-linecap: round;
+		}
+
+		.spieler_auserer_feuerrand_innen {
+			stroke:var(--bg);
+			stroke-width:2;
+			stroke-miterlimit:10;
+			stroke-linecap: round;
+		}
+
+		.raster {
+			stroke:var(--fg);
+			stroke-width:0.05;
+			/*stroke-dasharray:0.2;*/
+		}
+
+		.raster-sub {
+			stroke:var(--fg-faint);
+			stroke-width:0.05;
+			/*stroke-dasharray:0.2;*/
+		}
+
+		.mauer {
+			stroke:var(--fg);
+			stroke-width:0.5;
+			fill:url(#diagonalHatch);
+			fill-rule: evenodd;
+		}
+
+		.hatchfill{
+			stroke:none;
+			fill:var(--bg-mauerfüllung);
+		}
+
+		.hatchstroke{
+			stroke:var(--fg); 
+			stroke-width:0.3;
+		}
+
+	</style>
+
+</head>
+
+<body>
+<svg id="console" viewBox="0 0 109 121" xmlns="http://www.w3.org/2000/svg">
+
+<defs> 
+
+<pattern id="diagonalHatch" width="0.1em" height="0.1em" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+  <rect x="0" y="0" width="1em" height="1em" class="hatchfill"></rect>
+  <line x1="0" y1="0" x2="0" y2="10" class="hatchstroke"></line>
+</pattern>
+
+</defs>
+
+<line x1="12.5" y1="0.5" x2="12.5" y2="120.5" class="raster"></line><line x1="14.5" y1="0.5" x2="14.5" y2="120.5" class="raster-sub"></line><line x1="16.5" y1="0.5" x2="16.5" y2="120.5" class="raster-sub"></line><line x1="18.5" y1="0.5" x2="18.5" y2="120.5" class="raster-sub"></line><line x1="20.5" y1="0.5" x2="20.5" y2="120.5" class="raster-sub"></line><line x1="22.5" y1="0.5" x2="22.5" y2="120.5" class="raster-sub"></line><line x1="24.5" y1="0.5" x2="24.5" y2="120.5" class="raster"></line><line x1="26.5" y1="0.5" x2="26.5" y2="120.5" class="raster-sub"></line><line x1="28.5" y1="0.5" x2="28.5" y2="120.5" class="raster-sub"></line><line x1="30.5" y1="0.5" x2="30.5" y2="120.5" class="raster-sub"></line><line x1="32.5" y1="0.5" x2="32.5" y2="120.5" class="raster-sub"></line><line x1="34.5" y1="0.5" x2="34.5" y2="120.5" class="raster-sub"></line><line x1="36.5" y1="0.5" x2="36.5" y2="120.5" class="raster"></line><line x1="38.5" y1="0.5" x2="38.5" y2="120.5" class="raster-sub"></line><line x1="40.5" y1="0.5" x2="40.5" y2="120.5" class="raster-sub"></line><line x1="42.5" y1="0.5" x2="42.5" y2="120.5" class="raster-sub"></line><line x1="44.5" y1="0.5" x2="44.5" y2="120.5" class="raster-sub"></line><line x1="46.5" y1="0.5" x2="46.5" y2="120.5" class="raster-sub"></line><line x1="48.5" y1="0.5" x2="48.5" y2="120.5" class="raster"></line><line x1="50.5" y1="0.5" x2="50.5" y2="120.5" class="raster-sub"></line><line x1="52.5" y1="0.5" x2="52.5" y2="120.5" class="raster-sub"></line><line x1="54.5" y1="0.5" x2="54.5" y2="120.5" class="raster-sub"></line><line x1="56.5" y1="0.5" x2="56.5" y2="120.5" class="raster-sub"></line><line x1="58.5" y1="0.5" x2="58.5" y2="120.5" class="raster-sub"></line><line x1="60.5" y1="0.5" x2="60.5" y2="120.5" class="raster"></line><line x1="62.5" y1="0.5" x2="62.5" y2="120.5" class="raster-sub"></line><line x1="64.5" y1="0.5" x2="64.5" y2="120.5" class="raster-sub"></line><line x1="66.5" y1="0.5" x2="66.5" y2="120.5" class="raster-sub"></line><line x1="68.5" y1="0.5" x2="68.5" y2="120.5" class="raster-sub"></line><line x1="70.5" y1="0.5" x2="70.5" y2="120.5" class="raster-sub"></line><line x1="72.5" y1="0.5" x2="72.5" y2="120.5" class="raster"></line><line x1="74.5" y1="0.5" x2="74.5" y2="120.5" class="raster-sub"></line><line x1="76.5" y1="0.5" x2="76.5" y2="120.5" class="raster-sub"></line><line x1="78.5" y1="0.5" x2="78.5" y2="120.5" class="raster-sub"></line><line x1="80.5" y1="0.5" x2="80.5" y2="120.5" class="raster-sub"></line><line x1="82.5" y1="0.5" x2="82.5" y2="120.5" class="raster-sub"></line><line x1="84.5" y1="0.5" x2="84.5" y2="120.5" class="raster"></line><line x1="86.5" y1="0.5" x2="86.5" y2="120.5" class="raster-sub"></line><line x1="88.5" y1="0.5" x2="88.5" y2="120.5" class="raster-sub"></line><line x1="90.5" y1="0.5" x2="90.5" y2="120.5" class="raster-sub"></line><line x1="92.5" y1="0.5" x2="92.5" y2="120.5" class="raster-sub"></line><line x1="94.5" y1="0.5" x2="94.5" y2="120.5" class="raster-sub"></line><line x1="96.5" y1="0.5" x2="96.5" y2="120.5" class="raster"></line><line x1="98.5" y1="0.5" x2="98.5" y2="120.5" class="raster-sub"></line><line x1="100.5" y1="0.5" x2="100.5" y2="120.5" class="raster-sub"></line><line x1="102.5" y1="0.5" x2="102.5" y2="120.5" class="raster-sub"></line><line x1="104.5" y1="0.5" x2="104.5" y2="120.5" class="raster-sub"></line><line x1="106.5" y1="0.5" x2="106.5" y2="120.5" class="raster-sub"></line><line x1="0.5" y1="12.5" x2="108.5" y2="12.5" class="raster"></line><line x1="0.5" y1="14.5" x2="108.5" y2="14.5" class="raster-sub"></line><line x1="0.5" y1="16.5" x2="108.5" y2="16.5" class="raster-sub"></line><line x1="0.5" y1="18.5" x2="108.5" y2="18.5" class="raster-sub"></line><line x1="0.5" y1="20.5" x2="108.5" y2="20.5" class="raster-sub"></line><line x1="0.5" y1="22.5" x2="108.5" y2="22.5" class="raster-sub"></line><line x1="0.5" y1="24.5" x2="108.5" y2="24.5" class="raster"></line><line x1="0.5" y1="26.5" x2="108.5" y2="26.5" class="raster-sub"></line><line x1="0.5" y1="28.5" x2="108.5" y2="28.5" class="raster-sub"></line><line x1="0.5" y1="30.5" x2="108.5" y2="30.5" class="raster-sub"></line><line x1="0.5" y1="32.5" x2="108.5" y2="32.5" class="raster-sub"></line><line x1="0.5" y1="34.5" x2="108.5" y2="34.5" class="raster-sub"></line><line x1="0.5" y1="36.5" x2="108.5" y2="36.5" class="raster"></line><line x1="0.5" y1="38.5" x2="108.5" y2="38.5" class="raster-sub"></line><line x1="0.5" y1="40.5" x2="108.5" y2="40.5" class="raster-sub"></line><line x1="0.5" y1="42.5" x2="108.5" y2="42.5" class="raster-sub"></line><line x1="0.5" y1="44.5" x2="108.5" y2="44.5" class="raster-sub"></line><line x1="0.5" y1="46.5" x2="108.5" y2="46.5" class="raster-sub"></line><line x1="0.5" y1="48.5" x2="108.5" y2="48.5" class="raster"></line><line x1="0.5" y1="50.5" x2="108.5" y2="50.5" class="raster-sub"></line><line x1="0.5" y1="52.5" x2="108.5" y2="52.5" class="raster-sub"></line><line x1="0.5" y1="54.5" x2="108.5" y2="54.5" class="raster-sub"></line><line x1="0.5" y1="56.5" x2="108.5" y2="56.5" class="raster-sub"></line><line x1="0.5" y1="58.5" x2="108.5" y2="58.5" class="raster-sub"></line><line x1="0.5" y1="60.5" x2="108.5" y2="60.5" class="raster"></line><line x1="0.5" y1="62.5" x2="108.5" y2="62.5" class="raster-sub"></line><line x1="0.5" y1="64.5" x2="108.5" y2="64.5" class="raster-sub"></line><line x1="0.5" y1="66.5" x2="108.5" y2="66.5" class="raster-sub"></line><line x1="0.5" y1="68.5" x2="108.5" y2="68.5" class="raster-sub"></line><line x1="0.5" y1="70.5" x2="108.5" y2="70.5" class="raster-sub"></line><line x1="0.5" y1="72.5" x2="108.5" y2="72.5" class="raster"></line><line x1="0.5" y1="74.5" x2="108.5" y2="74.5" class="raster-sub"></line><line x1="0.5" y1="76.5" x2="108.5" y2="76.5" class="raster-sub"></line><line x1="0.5" y1="78.5" x2="108.5" y2="78.5" class="raster-sub"></line><line x1="0.5" y1="80.5" x2="108.5" y2="80.5" class="raster-sub"></line><line x1="0.5" y1="82.5" x2="108.5" y2="82.5" class="raster-sub"></line><line x1="0.5" y1="84.5" x2="108.5" y2="84.5" class="raster"></line><line x1="0.5" y1="86.5" x2="108.5" y2="86.5" class="raster-sub"></line><line x1="0.5" y1="88.5" x2="108.5" y2="88.5" class="raster-sub"></line><line x1="0.5" y1="90.5" x2="108.5" y2="90.5" class="raster-sub"></line><line x1="0.5" y1="92.5" x2="108.5" y2="92.5" class="raster-sub"></line><line x1="0.5" y1="94.5" x2="108.5" y2="94.5" class="raster-sub"></line><line x1="0.5" y1="96.5" x2="108.5" y2="96.5" class="raster"></line><line x1="0.5" y1="98.5" x2="108.5" y2="98.5" class="raster-sub"></line><line x1="0.5" y1="100.5" x2="108.5" y2="100.5" class="raster-sub"></line><line x1="0.5" y1="102.5" x2="108.5" y2="102.5" class="raster-sub"></line><line x1="0.5" y1="104.5" x2="108.5" y2="104.5" class="raster-sub"></line><line x1="0.5" y1="106.5" x2="108.5" y2="106.5" class="raster-sub"></line><line x1="0.5" y1="108.5" x2="108.5" y2="108.5" class="raster"></line><line x1="0.5" y1="110.5" x2="108.5" y2="110.5" class="raster-sub"></line><line x1="0.5" y1="112.5" x2="108.5" y2="112.5" class="raster-sub"></line><line x1="0.5" y1="114.5" x2="108.5" y2="114.5" class="raster-sub"></line><line x1="0.5" y1="116.5" x2="108.5" y2="116.5" class="raster-sub"></line><line x1="0.5" y1="118.5" x2="108.5" y2="118.5" class="raster-sub"></line><path class="mauer" d="M2.5 1.5 L10.5 1.5 L14.5 1.5 L22.5 1.5 L26.5 1.5 L34.5 1.5 L38.5 1.5 L46.5 1.5 L50.5 1.5 L58.5 1.5 L62.5 1.5 L70.5 1.5 L74.5 1.5 L82.5 1.5 L86.5 1.5 L94.5 1.5 L98.5 1.5 L106.5 1.5 A 1 1 0 0 1 107.5 2.5 L107.5 10.5 L107.5 14.5 L107.5 22.5 L107.5 26.5 L107.5 34.5 A 1 1 0 0 1 106.5 35.5 L98.5 35.5 A 1 1 0 0 1 97.5 34.5 L97.5 26.5 L97.5 22.5 L97.5 14.5 L97.5 12.5 A 1 1 0 0 0 96.5 11.5 L86.5 11.5 L84.5 11.5 A 1 1 0 0 0 83.5 12.5 L83.5 22.5 L83.5 26.5 L83.5 34.5 L83.5 38.5 L83.5 46.5 L83.5 50.5 L83.5 58.5 L83.5 62.5 L83.5 70.5 L83.5 74.5 L83.5 82.5 A 1 1 0 0 1 82.5 83.5 L74.5 83.5 L70.5 83.5 L62.5 83.5 L60.5 83.5 A 1 1 0 0 0 59.5 84.5 L59.5 94.5 A 1 1 0 0 1 58.5 95.5 L50.5 95.5 L46.5 95.5 L38.5 95.5 A 1 1 0 0 1 37.5 94.5 L37.5 86.5 L37.5 84.5 A 1 1 0 0 0 36.5 83.5 L26.5 83.5 L22.5 83.5 L14.5 83.5 L10.5 83.5 L2.5 83.5 A 1 1 0 0 1 1.5 82.5 L1.5 74.5 L1.5 70.5 L1.5 62.5 L1.5 58.5 L1.5 50.5 L1.5 46.5 L1.5 38.5 L1.5 34.5 L1.5 26.5 L1.5 22.5 L1.5 14.5 L1.5 10.5 L1.5 2.5 A 1 1 0 0 1 2.5 1.5 L10.5 1.5M22.5 11.5 L14.5 11.5 L12.5 11.5 A 1 1 0 0 0 11.5 12.5 L11.5 22.5 L11.5 26.5 L11.5 34.5 L11.5 38.5 L11.5 46.5 L11.5 50.5 L11.5 58.5 L11.5 62.5 L11.5 70.5 L11.5 72.5 A 1 1 0 0 0 12.5 73.5 L22.5 73.5 L26.5 73.5 L34.5 73.5 L38.5 73.5 L46.5 73.5 L50.5 73.5 L58.5 73.5 L62.5 73.5 L70.5 73.5 L72.5 73.5 A 1 1 0 0 0 73.5 72.5 L73.5 62.5 L73.5 58.5 L73.5 50.5 L73.5 46.5 L73.5 38.5 L73.5 34.5 L73.5 26.5 L73.5 22.5 L73.5 14.5 L73.5 12.5 A 1 1 0 0 0 72.5 11.5 L62.5 11.5 L58.5 11.5 L50.5 11.5 L46.5 11.5 L38.5 11.5 L34.5 11.5 L26.5 11.5 L22.5 11.5 L14.5 11.5M26.5 25.5 L34.5 25.5 L38.5 25.5 L46.5 25.5 L50.5 25.5 L58.5 25.5 A 1 1 0 0 1 59.5 26.5 L59.5 34.5 L59.5 38.5 L59.5 46.5 L59.5 50.5 L59.5 58.5 A 1 1 0 0 1 58.5 59.5 L50.5 59.5 L46.5 59.5 L38.5 59.5 L34.5 59.5 L26.5 59.5 A 1 1 0 0 1 25.5 58.5 L25.5 50.5 L25.5 46.5 L25.5 38.5 L25.5 34.5 L25.5 26.5 A 1 1 0 0 1 26.5 25.5 L34.5 25.5M46.5 35.5 L38.5 35.5 L36.5 35.5 A 1 1 0 0 0 35.5 36.5 L35.5 46.5 L35.5 48.5 A 1 1 0 0 0 36.5 49.5 L46.5 49.5 L48.5 49.5 A 1 1 0 0 0 49.5 48.5 L49.5 38.5 L49.5 36.5 A 1 1 0 0 0 48.5 35.5 L38.5 35.5M98.5 49.5 L106.5 49.5 A 1 1 0 0 1 107.5 50.5 L107.5 58.5 A 1 1 0 0 1 106.5 59.5 L98.5 59.5 A 1 1 0 0 1 97.5 58.5 L97.5 50.5 A 1 1 0 0 1 98.5 49.5 L106.5 49.5M98.5 73.5 L106.5 73.5 A 1 1 0 0 1 107.5 74.5 L107.5 82.5 L107.5 86.5 L107.5 94.5 L107.5 98.5 L107.5 106.5 L107.5 110.5 L107.5 118.5 A 1 1 0 0 1 106.5 119.5 L98.5 119.5 A 1 1 0 0 1 97.5 118.5 L97.5 110.5 L97.5 108.5 A 1 1 0 0 0 96.5 107.5 L86.5 107.5 L84.5 107.5 A 1 1 0 0 0 83.5 108.5 L83.5 118.5 A 1 1 0 0 1 82.5 119.5 L74.5 119.5 L70.5 119.5 L62.5 119.5 A 1 1 0 0 1 61.5 118.5 L61.5 110.5 A 1 1 0 0 1 62.5 109.5 L70.5 109.5 L72.5 109.5 A 1 1 0 0 0 73.5 108.5 L73.5 98.5 A 1 1 0 0 1 74.5 97.5 L82.5 97.5 L86.5 97.5 L94.5 97.5 L96.5 97.5 A 1 1 0 0 0 97.5 96.5 L97.5 86.5 L97.5 82.5 L97.5 74.5 A 1 1 0 0 1 98.5 73.5 L106.5 73.5M2.5 97.5 L10.5 97.5 A 1 1 0 0 1 11.5 98.5 L11.5 106.5 L11.5 110.5 L11.5 118.5 A 1 1 0 0 1 10.5 119.5 L2.5 119.5 A 1 1 0 0 1 1.5 118.5 L1.5 110.5 L1.5 106.5 L1.5 98.5 A 1 1 0 0 1 2.5 97.5 L10.5 97.5M26.5 97.5 L34.5 97.5 A 1 1 0 0 1 35.5 98.5 L35.5 106.5 L35.5 108.5 A 1 1 0 0 0 36.5 109.5 L46.5 109.5 A 1 1 0 0 1 47.5 110.5 L47.5 118.5 A 1 1 0 0 1 46.5 119.5 L38.5 119.5 L34.5 119.5 L26.5 119.5 A 1 1 0 0 1 25.5 118.5 L25.5 110.5 L25.5 106.5 L25.5 98.5 A 1 1 0 0 1 26.5 97.5 L34.5 97.5 Z"></path><g class="#F" transform="translate(12.5,60.5)">
+
+					<path class="feuer" d="M1,6a4.72,4.72,0,0,0,5,5,4.72,4.72,0,0,0,5-5,7.65,7.65,0,0,0-1-4S8.85,6,8,6,6,2,6,2,4.85,6,4,6,2,2,2,2A7.77,7.77,0,0,0,1,6Z"></path>
+					</g><g class="#S" transform="translate(60.5,12.5)">
+
+					<line class="spieler_innen" x1="5" y1="3" x2="7" y2="3"></line>
+					<line class="spieler_innen" x1="4" y1="9" x2="6" y2="6.43"></line>
+					<line class="spieler_innen" x1="8" y1="9" x2="6" y2="6.43"></line>
+					<line class="spieler_innen" x1="6" y1="3.86" x2="3" y2="5.57"></line>
+					<line class="spieler_innen" x1="9" y1="5.57" x2="6" y2="3.86"></line>
+					<line class="spieler_innen" x1="6" y1="6.43" x2="6" y2="3"></line>
+				</g><g class="#T" transform="translate(60.5,84.5)">
+
+					<line class="spieler_auserer_feuerrand" x1="5" y1="3" x2="7" y2="3"></line>
+					<line class="spieler_auserer_feuerrand" x1="4" y1="9" x2="6" y2="6.43"></line>
+					<line class="spieler_auserer_feuerrand" x1="8" y1="9" x2="6" y2="6.43"></line>
+					<line class="spieler_auserer_feuerrand" x1="6" y1="3.86" x2="3" y2="5.57"></line>
+					<line class="spieler_auserer_feuerrand" x1="9" y1="5.57" x2="6" y2="3.86"></line>
+					<line class="spieler_auserer_feuerrand" x1="6" y1="6.43" x2="6" y2="3"></line>
+					<line class="spieler_auserer_feuerrand" x1="5" y1="3" x2="7" y2="3"></line>
+
+
+					<line class="spieler_auserer_feuerrand_innen" x1="5" y1="3" x2="7" y2="3"></line>
+					<line class="spieler_auserer_feuerrand_innen" x1="4" y1="9" x2="6" y2="6.43"></line>
+					<line class="spieler_auserer_feuerrand_innen" x1="8" y1="9" x2="6" y2="6.43"></line>
+					<line class="spieler_auserer_feuerrand_innen" x1="6" y1="3.86" x2="3" y2="5.57"></line>
+					<line class="spieler_auserer_feuerrand_innen" x1="9" y1="5.57" x2="6" y2="3.86"></line>
+					<line class="spieler_auserer_feuerrand_innen" x1="6" y1="6.43" x2="6" y2="3"></line>
+					<line class="spieler_auserer_feuerrand_innen" x1="5" y1="3" x2="7" y2="3"></line>
+
+
+					<line class="spieler_innen" x1="4" y1="9" x2="6" y2="6.43"></line>
+					<line class="spieler_innen" x1="8" y1="9" x2="6" y2="6.43"></line>
+					<line class="spieler_innen" x1="6" y1="3.86" x2="3" y2="5.57"></line>
+					<line class="spieler_innen" x1="9" y1="5.57" x2="6" y2="3.86"></line>
+					<line class="spieler_innen" x1="6" y1="6.43" x2="6" y2="3"></line>
+					<line class="spieler_innen" x1="5" y1="3" x2="7" y2="3"></line>
+
+				</g>Sorry, your browser does not support inline SVG and so you can't play this game sadface.</svg></body></html>
