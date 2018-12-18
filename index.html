@@ -4,11 +4,15 @@
 	<meta charset="UTF-8">
 	<link rel="shortcut icon" href="favicon.ico"/>
 
-
-	<title>Galaktisches Etymologieforschungsinstitut</title>
+	<title>Augenschlepper</title>
 
 
 	<style>	
+		@font-face {
+	      font-family: embeddedfont;
+	      src: url('AmaticSC-Regular.ttf');
+	    }
+
 		:root {
 		 /* --bg: #0471b6;
 		  --fg: #7bc8ff;
@@ -16,12 +20,34 @@
 
 		  --bg: white;
 		  --fg: black;
-		  --fg-faint: rgba(1,1,1,0.2);
+		  --fg-faint: rgba(0,0,0,0.2);
 		  --bg-mauerfüllung : white;
+		  --bg-mauerlinie : rgba(0,0,0,0.2);
+		  --bg-seite : rgb(100,150,255);
+		  --seite-schaten : rgba(0,0,0,0.2);
 		}
 
+
+	    .text { 
+			font-family: 'embeddedfont', cursive;
+	    	font-size: 7pt; 	
+	    	color: var(--fg);
+	    }
+
+	    .scoretext { 
+			font-family: 'helvetica';
+	    	font-size: 4pt; 
+	    	font-weight: bold;	
+	    	color: blue;
+	    	fill: var(--bg);
+	    	stroke: none;	
+	    	dominant-baseline: central;
+	    	text-anchor: middle;
+	    }
+
+
 		body{
-			background-color: var(--bg);
+			background-color: var(--bg-seite);
 			width: 100%;
 			margin: 0;
 			padding:0;
@@ -34,7 +60,92 @@
 
 
 		}
-  
+
+		.würfel-hg {
+			stroke:none;	
+			fill:url(#diagonalHatch);
+		}
+
+		.würfel-has0 {
+			stroke:none;	
+			fill:url(#dh0);
+		}
+
+		.würfel-has1 {
+			stroke:none;	
+			fill:url(#dh1);
+		}
+
+		.würfel-has2 {
+			stroke:none;	
+			fill:url(#dh2);
+		}
+
+		.würfel-has3 {
+			stroke:none;	
+			fill:url(#dh3);
+		}
+
+		.würfel-has4 {
+			stroke:none;	
+			fill:url(#dh4);
+		}
+
+		.würfel-has5 {
+			stroke:none;	
+			fill:url(#dh5);
+		}
+
+		.würfel-has6 {
+			stroke:none;	
+			fill:url(#dh6);
+		}
+
+		.würfel-has7 {
+			stroke:none;	
+			fill:url(#dh7);
+		}
+
+		.würfel-has8 {
+			stroke:none;	
+			fill:url(#dh8);
+		}
+
+		.würfel-umriss {
+			stroke: var(--fg);
+			stroke-width:0.5;		
+			fill:none;
+		}
+
+		.seite {
+			fill:var(--bg);
+			stroke:none;
+		}
+  		
+		.seite-schaten {
+			fill:var(--seite-schaten);
+			stroke:none;
+		}
+
+		.schaten {
+			fill:var(--bg);
+			stroke:none;
+		}
+  		#svgcontainer, #bgcontainer {
+			background-color: none;
+			width: 100%;
+			margin: 0;
+			padding:0;
+			overflow: hidden;;
+			text-align: center;
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding-top: 50px;
+			margin-top: 50px;
+  		}
+
 		svg {
 			 position:fixed; 
 			 top:0; 
@@ -47,7 +158,12 @@
 			fill:var(--bg);
 			stroke:var(--fg);
 		}
-		
+
+		.auge_dunkel{
+			fill:var(--fg);
+			stroke:var(--fg);
+		}
+
 		.feuer{
 			fill:var(--fg);
 			stroke:none;
@@ -74,6 +190,12 @@
 			stroke-width:2;
 			stroke-miterlimit:10;
 			stroke-linecap: round;
+		}
+
+		.raster-dick {
+			stroke:var(--fg);
+			stroke-width:0.7;
+			/*stroke-dasharray:0.2;*/
 		}
 
 		.raster {
@@ -116,20 +238,21 @@
 
 var level=0;
 
+var spielstand=[0,0];
 var entitäten=[];
+var würfeln=[];
+
 
 var levels = [
 	[
-		"#########",
-		"#....S#.#",
-		"#.###.#.#",
-		"#.#.#.#..",
-		"#.###.#.#",
-		"#F..o.#..",
-		"#######.#",
-		"...##T.o#",
-		"#.#...###",
-		"#.##.##.#",
+		"o...............",
+		".........o....o.",
+		"..o..S..........",
+		"...o............",
+		"..........o.o...",
+		"......oo...o....",
+		".o........o.o...",
+		"................",
 	],
 	[
 		"###.",
@@ -162,6 +285,7 @@ function S(de,en){
 	}
 }
 
+
 var gameName="pipschlepper"
 function setVal(key,val){
 	if (typeof(Storage) !== "undefined") {
@@ -184,124 +308,6 @@ function getVal(key, default_val){
 	}
 }
 
-
-	let keyAllowed = {};
-
-	function onFocus(e){
-		keyAllowed = {};
-	}
-
-	function onKeyup(e){
-		keyAllowed [e.which] = true;
-	}
-
-	function onTitelInput(k){
-
-	}
-
-	function onSpielInput(k){
-
-	}
-
-	function onInput(k){
-		if (k===6&&gameState!=="TITEL"){
-			setGameState("TITEL");
-			return;
-		}
-		switch(gameState){
-			case "TITEL":
-			onTitelInput(k);
-			break;
-			case "SPIEL":
-			onSpielInput(k);
-			break;
-		}
-	}
-
-	function checkKey(e) {
-	    e = e || window.event;
-
-		if (keyAllowed [e.which] === false) {
-			if (e.keyCode == '88' || e.keyCode =='32'||e.keyCode =='13'||e.keyCode =='68'){
-				return;
-			}
-		}
-		keyAllowed [e.which] = false;
-		 
-	    if (e.keyCode == '38') {
-	        // up arrow
-	    	onInput(0);
-	    	e.preventDefault();
-	    }
-	    else if (e.keyCode == '40') {
-	        // down arrow
-	    	onInput(1);
-	    	e.preventDefault();
-	    }
-	    else if (e.keyCode == '37') {
-	       // left arrow
-	    	onInput(2);
-	    	e.preventDefault();
-	    }
-	    else if (e.keyCode == '39') {
-	       // right arrow
-	    	onInput(3);
-	    	e.preventDefault();
-	    } else if (e.keyCode == '88' || e.keyCode =='32'||e.keyCode =='13'||e.keyCode =='68'){
-	    	onInput(4);
-	    	e.preventDefault();
-	    } else if (e.keyCode=='90'||e.keyCode=='85'){
-	    	onInput(5);
-	    } else if (e.keyCode=='27'){
-	    	onInput(6);
-	    } else if (e.keyCode=='72'){
-	    	onInput(7);
-	    } else if (e.keycode=='88'){
-	    	onInput(8);
-	    } 
-	    render();
-
-	}
-
-	function render(){
-		switch(gameState){
-			case "TITEL":
-				renderTitel();
-				break;
-			case "SPIEL":
-				renderSpiel();
-				break;
-		}
-	}
-
-	function renderTitel(){
-
-	}
-
-	function GuteKoordinate(mauermaske){
-		var x=-1;
-		var y=-1;
-		for (var j=0;j<mauermaske.length;j++){
-			var zeile=mauermaske[j];
-			for (var i=0;i<zeile.length;i++){
-				if (zeile[i]===1){
-					x=i;
-					y=j;
-					break;
-				}
-			}
-		}
-
-		while (x>0){
-			if (zeile[y][x-1]===1){
-				x--;
-			} else {
-				break;
-			}
-		}
-
-		return [x,y];
-	}
 
 	function rotUZS(n){
 		switch(n){
@@ -362,6 +368,215 @@ function getVal(key, default_val){
 			break;
 		}
 	}
+
+	let keyAllowed = {};
+
+	function onFocus(e){
+		keyAllowed = {};
+	}
+
+	function onKeyup(e){
+		keyAllowed [e.which] = true;
+	}
+
+	function onTitelInput(k){
+
+	}
+
+	function getSpieler(){
+		for (var i=0;i<entitäten.length;i++){
+			if (entitäten[i][0]==="S"){
+				return entitäten[i];
+			}
+		}
+	}
+
+	function würfelAt(x,y){
+		return würfelPunktzahl(x,y,würfeln)>0;
+	}
+
+	function getPipAt(x,y){
+		for (var i=0;i<entitäten.length;i++){
+			var e = entitäten[i];
+			if (e[0]!=="S" && e[1]===x && e[2]===y){
+				return e;
+			}
+		}
+		return null;
+	}
+
+	function inBounds(x,y){
+
+		var curlevel=levels[level];
+		var level_b=curlevel[0].length;
+		var level_h=curlevel.length;
+
+		if (x<0||y<0||x>=level_b||y>=level_h){
+			return false;
+		}
+		return true;
+	}
+
+	function emptySpace(x,y,würfelsperren){
+		var curlevel=levels[level];
+		var level_b=curlevel[0].length;
+		var level_h=curlevel.length;
+
+		if (x<0||y<0||x>=level_b||y>=level_h){
+			return false;
+		}
+		for (var i=0;i<entitäten.length;i++){
+			var e = entitäten[i];
+			if (e[1]===x&&e[2]===y){
+				return false;
+			}
+		}
+		if (würfelsperren===true){
+			if (würfelAt(x,y)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	function onSpielInput(k){
+		console.log(k);
+		if (k<4){
+			var player = getSpieler();
+			var [dx,dy]=dirToDelta(k);
+			var tx = player[1]+dx;
+			var ty = player[2]+dy;
+			if (inBounds(tx,ty)===false){
+				return;
+			}
+			let pip = getPipAt(tx,ty); 
+			if (pip!==null && pip[0]=="o"){
+				var ttx=tx+dx;
+				var tty=ty+dy;
+				if (emptySpace(ttx,tty,true)){
+					pip[1]=ttx;
+					pip[2]=tty;
+					pip=null;
+
+					würfelMelden();
+				}
+			}
+			if (pip===null)
+			{
+				player[1]=tx;
+				player[2]=ty;
+			}
+
+	    	render();
+	    	zustandSpeichern();
+		} else if (k===5){//undo
+			rückgängig();
+			render();
+		} else if (k===6){//restart
+			neustart();
+			render();
+		}
+
+
+	}
+
+	function onInput(k){
+		if (k===7&&gameState!=="TITEL"){
+			setGameState("TITEL");
+			return;
+		}
+		switch(gameState){
+			case "TITEL":
+			onTitelInput(k);
+			break;
+			case "SPIEL":
+			onSpielInput(k);
+			break;
+		}
+	}
+
+	function checkKey(e) {
+	    e = e || window.event;
+
+		if (keyAllowed [e.which] === false) {
+			if (e.keyCode == '88' || e.keyCode =='32'||e.keyCode =='13'||e.keyCode =='68'){
+				return;
+			}
+		}
+		keyAllowed [e.which] = false;
+		 
+	    if (e.keyCode == '38') {
+	        // up arrow
+	    	onInput(0);
+	    	e.preventDefault();
+	    }
+	    else if (e.keyCode == '40') {
+	        // down arrow
+	    	onInput(1);
+	    	e.preventDefault();
+	    }
+	    else if (e.keyCode == '37') {
+	       // left arrow
+	    	onInput(2);
+	    	e.preventDefault();
+	    }
+	    else if (e.keyCode == '39') {
+	       // right arrow
+	    	onInput(3);
+	    	e.preventDefault();
+	    } else if (e.keyCode == '88' || e.keyCode =='32'||e.keyCode =='13'||e.keyCode =='68'){
+	    	onInput(4);
+	    	e.preventDefault();
+	    } else if (e.keyCode=='90'||e.keyCode=='85'){//z or u
+	    	onInput(5);
+	    } else if (e.keyCode=='82'){//r
+	    	onInput(6);
+	    } else if (e.keyCode=='27'){//escape
+	    	onInput(7);
+	    } 
+
+	}
+
+	function render(){
+		switch(gameState){
+			case "TITEL":
+				renderTitel();
+				break;
+			case "SPIEL":
+				renderSpiel();
+				break;
+		}
+	}
+
+	function renderTitel(){
+
+	}
+
+	function GuteKoordinate(mauermaske){
+		var x=-1;
+		var y=-1;
+		for (var j=0;j<mauermaske.length;j++){
+			var zeile=mauermaske[j];
+			for (var i=0;i<zeile.length;i++){
+				if (zeile[i]===1){
+					x=i;
+					y=j;
+					break;
+				}
+			}
+		}
+
+		while (x>0){
+			if (zeile[y][x-1]===1){
+				x--;
+			} else {
+				break;
+			}
+		}
+
+		return [x,y];
+	}
+
 
 	function getPunkt(x,y,raster){
 		if (x<0||y<0||x>=raster[0].length||y>=raster.length){
@@ -514,7 +729,6 @@ function getVal(key, default_val){
 				}
 			}
 		}
-		console.log(flutfüllung);
 		var getrennt=[];
 		for (var c=0;c<counter;c++){
 			var indexGefunden=false;
@@ -539,11 +753,9 @@ function getVal(key, default_val){
 		}
 
 
-		console.log(getrennt);
 		var konturen=[];
 		for ( var i=0;i<getrennt.length;i++ ){
 			var ebene = getrennt[i];
-			console.log(ebene);
 			var kanten = Kanten(ebene);
 
 			while(kanten.length>0){
@@ -566,7 +778,6 @@ function getVal(key, default_val){
 				var ol = kanten.length;
 				var linie = Konturausrechnung(ebene,x,y,dir,kanten);
 				konturen.push(linie);
-				console.log("KL",ol,kanten.length);
 				if (kanten.length===ol){
 					break;
 				}
@@ -582,17 +793,34 @@ function getVal(key, default_val){
 		return rotGUZS(dir1)===dir2;
 	}
 
+	function printText(x,y,s){
+		 var result = `<text x="${x+3}" y="${y+12-1.5}" class="text">${s}</text>`;
+		 return result;
+
+	}
+
+	var lastlb=-1;
+	var lastlh=-1;
+
 	function renderSpiel(){
 
 		var curlevel=levels[level];
 
 		var level_b=curlevel[0].length;
 		var level_h=curlevel.length;
+		var genbg = lastlb!==level_b||lastlh!==level_h;
+		lastlb=level_b;
+		lastlh=level_h;
 
-		var linie_b=1;
+		var linie_exterior=4;
+		var linie_seite_rand=2;
 
-		var o_bildschirm_rand_x=linie_b/2;
-		var o_bildschirm_rand_y=linie_b/2;
+		var o_bildschirm_rand_x=(linie_exterior+linie_seite_rand)/2;
+		var o_bildschirm_rand_y=(linie_exterior+linie_seite_rand)/2+24;
+
+
+		var o_seite_rand_x=linie_exterior/2;
+		var o_seite_rand_y=linie_exterior/2;
 
 		var o_bildschirm_zelle_g_b=12;
 		var o_bildschirm_zelle_g_h=12;
@@ -600,30 +828,60 @@ function getVal(key, default_val){
 		var o_spielplatz_b=level_b*o_bildschirm_zelle_g_b;
 		var o_spielplatz_h=level_h*o_bildschirm_zelle_g_h;
 
-		var o_screen_b=o_spielplatz_b+2*o_bildschirm_rand_x;
-		var o_screen_h=o_spielplatz_h+2*o_bildschirm_rand_y;
 
+		var o_screen_b=o_spielplatz_b+2*o_bildschirm_rand_x;
+		var o_screen_h=o_spielplatz_h+2*o_bildschirm_rand_y-24+linie_exterior/6;
+
+		var o_seite_b=o_spielplatz_b+linie_seite_rand;
+		var o_seite_h=o_spielplatz_h+linie_seite_rand+24;
 
 		var svg=`
 <svg id="console" viewBox="0 0 ${o_screen_b} ${o_screen_h}" xmlns="http://www.w3.org/2000/svg">
 
 <defs> 
 
+
+
 <pattern id="diagonalHatch" width="0.1em" height="0.1em" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
   <rect x="0" y="0" width="1em" height="1em" class="hatchfill"/>
   <line x1="0" y1="0" x2="0" y2="10" class="hatchstroke" />
 </pattern>
 
+
+
 </defs>
 
+
+
 `
+let svgbg=``;
+
+if (genbg){
+svgbg=`
+<svg id="console" viewBox="0 0 ${o_screen_b} ${o_screen_h}" xmlns="http://www.w3.org/2000/svg">
+
+<defs> 
+
+
+
+</defs>
+
+
+<rect x="${o_seite_rand_x+linie_exterior/4}" y="${o_seite_rand_y+linie_exterior/4}" width="${o_seite_b}" height="${o_seite_h}" class="seite-schaten"" />
+
+<rect x="${o_seite_rand_x}" y="${o_seite_rand_y}" width="${o_seite_b}" height="${o_seite_h}" class="seite"" />
+
+
+`;
 
 // svg+=`
-// <rect x="${o_bildschirm_rand_x}" y="${o_bildschirm_rand_x}" width="${o_spielplatz_b}" height="${o_spielplatz_h}" style="fill:${farbe_bg};stroke-width:3;stroke:${farbe_linie}" />`
+// `
 
 // svg+=`
 // <polygon points="100,10 40,198 190,78 10,78 160,198" style="fill:lime;stroke:purple;stroke-width:5;fill-rule:nonzero;"/>
 // `;
+
+		
 	
 		//rasterlinien
 		for (var i=0;i<=level_b;i++){
@@ -634,13 +892,13 @@ function getVal(key, default_val){
 
 			// if (i>0)
 			{
-				svg+=`<line x1="${lx_1}" y1="${ly_1}" x2="${lx_2}" y2="${ly_2}" class="raster" />`
+				svgbg+=`<line x1="${lx_1}" y1="${ly_1}" x2="${lx_2}" y2="${ly_2}" class="raster" />`
 			}
 			if (i<level_b){
 				for (var j=1;j<6;j++){
 					lx_1+=o_bildschirm_zelle_g_b*1/6
 					lx_2+=o_bildschirm_zelle_g_h*1/6
-					svg+=`<line x1="${lx_1}" y1="${ly_1}" x2="${lx_2}" y2="${ly_2}" class="raster-sub" />`
+					svgbg+=`<line x1="${lx_1}" y1="${ly_1}" x2="${lx_2}" y2="${ly_2}" class="raster-sub" />`
 				}
 			}
 		}
@@ -652,18 +910,17 @@ function getVal(key, default_val){
 
 			// if (j>0)
 			{
-				svg+=`<line x1="${lx_1}" y1="${ly_1}" x2="${lx_2}" y2="${ly_2}" class="raster" />`
+				svgbg+=`<line x1="${lx_1}" y1="${ly_1}" x2="${lx_2}" y2="${ly_2}" class="raster" />`
 			}		
 			if (j<level_h){
 				for (var i=1;i<6;i++){
 					ly_1+=o_bildschirm_zelle_g_b*1/6
 					ly_2+=o_bildschirm_zelle_g_h*1/6
-					svg+=`<line x1="${lx_1}" y1="${ly_1}" x2="${lx_2}" y2="${ly_2}" class="raster-sub" />`
+					svgbg+=`<line x1="${lx_1}" y1="${ly_1}" x2="${lx_2}" y2="${ly_2}" class="raster-sub" />`
 				}
 			}
 		}
-
-
+}
 		var konturen = MauerTrennen(curlevel);
 		let path = `<path class="mauer" d="`;
 		for (var i=0;i<konturen.length;i++){
@@ -734,37 +991,79 @@ function getVal(key, default_val){
 
 
 		}
-			path+=` Z"/>`;
-			svg+=path;
+		path+=` "/>`;
+		svg+=path;
+
+		for (var i=0;i<würfeln.length;i++){
+			var würfel=würfeln[i];
+			var wx=1+o_bildschirm_rand_x+o_bildschirm_zelle_g_b*würfel[0];
+			var wy=1+o_bildschirm_rand_y+o_bildschirm_zelle_g_h*würfel[1];
+			var wg=12*3-2;
+			
+			svg+=`<rect class="würfel-hg" x="${wx}" y="${wy}" width="${wg}" height="${wg}" rx="5">`
+
+			 if (würfel[2]===0){
+				würfel[2]=1;
+				// svg+=`<animate attributeName="opacity" from="0" to="1" dur="0.2s"  />`;
+			 }
+
+			svg+=`</rect>`
+
+			// svg+=`<g class="#${entität[0]}" transform="translate(${ox},${oy})">`
+		}
+
+
+		// for (var i=0;i<würfeln.length;i++){
+		// 	var würfel=würfeln[i];
+		// 	var wx=1+o_bildschirm_rand_x+o_bildschirm_zelle_g_b*würfel[0];
+		// 	var wy=1+o_bildschirm_rand_y+o_bildschirm_zelle_g_h*würfel[1];
+		// 	var wg=12*3-2;
+		// 	var hashindex = (würfel[0]%3)*3+(würfel[1]%3);
+		// 	svg+=`<rect class="würfel-has${hashindex}" x="${wx}" y="${wy}" width="${wg}" height="${wg}" rx="5"/>`
+
+		// }
+
 		//Entitäten
 		for (var i=0;i<entitäten.length;i++){
 			var entität=entitäten[i];
 			var ox=o_bildschirm_rand_x+o_bildschirm_zelle_g_b*entität[1];
 			var oy=o_bildschirm_rand_y+o_bildschirm_zelle_g_h*entität[2];
 			svg+=`<g class="#${entität[0]}" transform="translate(${ox},${oy})">
-`
+`			
+			var lx = o_bildschirm_rand_x+o_bildschirm_zelle_g_b*entität[3];
+			var ly = o_bildschirm_rand_y+o_bildschirm_zelle_g_h*entität[4];
+			if (ox!==lx||oy!==ly){
+				// svg+=`<animateTransform attributeName="transform"
+	   //                        attributeType="XML"
+	   //                        type="translate"
+	   //                        from="${lx} ${ly}"
+	   //                        to="${ox} ${oy}"
+	   //                        dur="0.1s"/>`;
+	            entität[3]=entität[1];
+	            entität[4]=entität[2];
+	        }
 			switch(entität[0]){
 				case "F"://FEUER
 					svg+=`
 					<path class="feuer" d="M1,6a4.72,4.72,0,0,0,5,5,4.72,4.72,0,0,0,5-5,7.65,7.65,0,0,0-1-4S8.85,6,8,6,6,2,6,2,4.85,6,4,6,2,2,2,2A7.77,7.77,0,0,0,1,6Z"/>
 					`;
 				break;
-				case "S"://SPIELER
-				svg+=`
-					<line class="spieler_innen" x1="5" y1="3" x2="7" y2="3"/>
-					<line class="spieler_innen" x1="4" y1="9" x2="6" y2="6.43"/>
-					<line class="spieler_innen" x1="8" y1="9" x2="6" y2="6.43"/>
-					<line class="spieler_innen" x1="6" y1="3.86" x2="3" y2="5.57"/>
-					<line class="spieler_innen" x1="9" y1="5.57" x2="6" y2="3.86"/>
-					<line class="spieler_innen" x1="6" y1="6.43" x2="6" y2="3"/>
-				`
-				break;	
+				// case "S"://SPIELER
+				// svg+=`
+				// 	<line class="spieler_innen" x1="5" y1="3" x2="7" y2="3"/>
+				// 	<line class="spieler_innen" x1="4" y1="9" x2="6" y2="6.43"/>
+				// 	<line class="spieler_innen" x1="8" y1="9" x2="6" y2="6.43"/>
+				// 	<line class="spieler_innen" x1="6" y1="3.86" x2="3" y2="5.57"/>
+				// 	<line class="spieler_innen" x1="9" y1="5.57" x2="6" y2="3.86"/>
+				// 	<line class="spieler_innen" x1="6" y1="6.43" x2="6" y2="3"/>
+				// `
+				// break;	
 				case "o"://Auge
 				svg+=`
 					<circle class="auge_leer" cx="6" cy="6" r="3"  />
 					`
-				break;		
-				case "T":
+				break;			
+				case "S":
 				svg+=`
 					<line class="spieler_auserer_feuerrand" x1="5" y1="3" x2="7" y2="3"/>
 					<line class="spieler_auserer_feuerrand" x1="4" y1="9" x2="6" y2="6.43"/>
@@ -792,19 +1091,161 @@ function getVal(key, default_val){
 					<line class="spieler_innen" x1="5" y1="3" x2="7" y2="3"/>
 
 				`//FEUERSPIELER
+				break;
+
+				default://Auge
+				svg+=`
+					<circle class="auge_dunkel" cx="6" cy="6" r="3"  />`
+
+					if (entität[5]===0){
+						// svg+=`<animate attributeName="fill" from="rgba(0,0,0,0)" to="rgba(0,0,0,1)" dur="10s"  />`;
+					}
+
+					svg+=`</circle>
+					<text x=6 y=6 class="scoretext">`
+
+					if (entität[5]===0){
+						entität[5]=1;
+						// svg+=`<animate attributeName="opacity" from="0" to="1" dur="0.3s"  />`;
+					}
+					svg+=`${entität[0]}
+					</text>
+					`
 				break;		
 			}
 
+
+
 			svg+="</g>"
 		}
+
+
+		for (var i=0;i<würfeln.length;i++){
+			var würfel=würfeln[i];
+			var wx=1+o_bildschirm_rand_x+o_bildschirm_zelle_g_b*würfel[0];
+			var wy=1+o_bildschirm_rand_y+o_bildschirm_zelle_g_h*würfel[1];
+			var wg=12*3-2;
+			
+			svg+=`<rect class="würfel-umriss" x="${wx}" y="${wy}" width="${wg}" height="${wg}" rx="5">`
+
+			 if (würfel[2]===0){
+				würfel[2]=1;
+				// svg+=`<animate attributeName="opacity" from="0" to="1" dur="0.2s"  />`;
+			 }
+
+			 svg+="</rect>";
+			// svg+=`<g class="#${entität[0]}" transform="translate(${ox},${oy})">`
+		}
+		
+
+{
+			//header
+
+			var tl_x = o_bildschirm_rand_x;
+			var tl_y = o_bildschirm_rand_y-24;
+			var tr_x = o_bildschirm_rand_x+12*level_b;
+			var tr_y = o_bildschirm_rand_y-24;
+
+			var bl_x = o_bildschirm_rand_x;
+			var bl_y = o_bildschirm_rand_y;
+			var br_x = o_bildschirm_rand_x+12*level_b;
+			var br_y = o_bildschirm_rand_y;
+
+
+			var ml_x = (tl_x+bl_x)/2;
+			var ml_y = (tl_y+bl_y)/2;
+			var mr_x = (tr_x+br_x)/2;
+			var mr_y = (tr_y+br_y)/2;
+
+			var tm_x=(tl_x+tr_x)/2;
+			var tm_y=(tl_y+tr_y)/2;
+
+			var mm_x=(ml_x+mr_x)/2;
+			var mm_y=(ml_y+mr_y)/2;
+
+			var bm_x=(bl_x+br_x)/2;
+			var bm_y=(bl_y+br_y)/2+12*level_h;
+
+			svg+=`<line x1="${tl_x}" y1="${tl_y}" x2="${bl_x}" y2="${bl_y}" class="raster" />`
+			svg+=`<line x1="${tr_x}" y1="${tr_y}" x2="${br_x}" y2="${br_y}" class="raster" />`
+			svg+=`<line x1="${tl_x}" y1="${tl_y}" x2="${tr_x}" y2="${tr_y}" class="raster" />`
+
+			svg+=`<line x1="${ml_x}" y1="${ml_y}" x2="${mr_x}" y2="${mr_y}" class="raster" />`
+
+			svg+=`<line x1="${mm_x}" y1="${mm_y}" x2="${bm_x}" y2="${bm_y}" class="raster-dick" />`
+
+			svg+=printText(o_seite_rand_x,o_seite_rand_y,S("Augenschlepper (Level 1 von 3)","Pip Schlepper (Level 1 of 3)"));
+			svg+=printText(o_seite_rand_x,o_seite_rand_y+12,S("DU","YOU")+` : ${spielstand[0]}`);
+			svg+=printText(o_seite_rand_x+12*level_b/2,o_seite_rand_y+12,S("GEGNER","OPPONENT")+` : ${spielstand[1]}`);
+		}
+
+
 	svg+=`Sorry, your browser does not support inline SVG and so you can't play this game sadface.</svg>`;
 
-	document.body.innerHTML=svg;
+	if (genbg){
+		svgbg+="</svg>"
+		document.getElementById("bgcontainer").innerHTML=svgbg;
+	}
+	document.getElementById("svgcontainer").innerHTML=svg;
+	// document.body.innerHTML=svg;
+	}
+
+
+/*
+	let zustand = {
+		entitäten : [],
+		würfeln : [],
+		spielstand : [0,0],
+	};
+*/
+	let undoZustände=[];
+
+	function zustandSpeichern(){
+		var zustand_dict = {
+			entitäten : entitäten,
+			würfeln : würfeln,
+			spielstand : spielstand,
+		};
+		var zustand_str = JSON.stringify(zustand_dict);
+		if (undoZustände.length===0 || zustand_str!==undoZustände[undoZustände.length-1]){
+			undoZustände.push(zustand_str);
+		}
+	}
+
+	function rückgängig(){
+		if (undoZustände.length===1){
+			return;
+		}
+		undoZustände.pop();
+		var zustand_str=undoZustände[undoZustände.length-1];
+		var zustand_dict=JSON.parse(zustand_str);
+		entitäten = zustand_dict.entitäten;
+		würfeln = zustand_dict.würfeln;
+		spielstand = zustand_dict.spielstand;
+	}
+
+	function neustart(){
+
+		if (undoZustände.length===1){
+			return;
+		}
+		undoZustände.push(undoZustände[0]);
+		var zustand_str=undoZustände[undoZustände.length-1];
+		var zustand_dict=JSON.parse(zustand_str);
+		entitäten = zustand_dict.entitäten;
+		würfeln = zustand_dict.würfeln;
+		spielstand = zustand_dict.spielstand;
 	}
 
 	function startSpiel(){
-		entitäten=[];
+		undoZustände=[];
 
+		entitäten=[];
+		würfeln=[];
+
+		lastlb=-1;
+	 	lastlh=-1;
+		spielstand=[0,0];
 		var curlevel=levels[level];
 		var level_b=curlevel[0].length;
 		var level_h=curlevel.length;
@@ -819,22 +1260,186 @@ function getVal(key, default_val){
 					break;
 					case "S":
 					//Spieler
-					entitäten.push(["S",i,j]);
+					entitäten.push(["S",i,j,i,j]);
 					break;
 					case "F":
 					//Spieler
-					entitäten.push(["F",i,j]);
+					entitäten.push(["F",i,j,i,j]);
 					break;
 					case "o":
 					//Auge
-					entitäten.push(["o",i,j]);
+					entitäten.push(["o",i,j,i,j]);
 					break;
 					case "T":
 					//Spieler
-					entitäten.push(["T",i,j]);
+					entitäten.push(["T",i,j,i,j]);
+					break;
+					case ".":
+					break;
+					default://auge
+					entitäten.push([c,i,j,i,j]);
 					break;
 				}
 			}
+		}
+
+		würfelMelden();
+		for (var i=0;i<würfeln.length;i++){
+			würfeln[i][2]=1;
+		}
+
+		zustandSpeichern();
+	}
+
+	function pipAt(x,y){
+		for (var i=0;i<entitäten.length;i++){
+			let entität=entitäten[i];
+			if (entität[0]==="o"){
+				if (entität[1]===x && entität[2]===y){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	let dicefaces = [
+		[
+		[0,0,0],
+		[0,1,0],
+		[0,0,0],
+		],
+		[
+		[1,0,0],
+		[0,0,0],
+		[0,0,1],
+		],
+		[
+		[0,0,1],
+		[0,0,0],
+		[1,0,0],
+		],
+		[
+		[1,0,0],
+		[0,1,0],
+		[0,0,1],
+		],
+		[
+		[0,0,1],
+		[0,1,0],
+		[1,0,0],
+		],
+		[
+		[1,0,1],
+		[0,0,0],
+		[1,0,1],
+		],
+		[
+		[1,0,1],
+		[0,1,0],
+		[1,0,1],
+		],
+		[
+		[1,0,1],
+		[1,0,1],
+		[1,0,1],
+		],
+		[
+		[1,1,1],
+		[0,0,0],
+		[1,1,1],
+		],
+
+	];
+	function geltenderWürfelBei(x,y){
+		//no overlapping dic
+		for (var i=0;i<würfeln.length;i++){
+			var [wx,wy]=würfeln[i];
+			if (Math.abs(wx-x)<=2.1 && Math.abs(wy-y)<=2.1){
+				return false;
+			}
+		}
+		var valid=false;
+		for (var k=0;k<dicefaces.length;k++){
+			var df = dicefaces[k];
+			var good=true;
+			for (var i=0;i<3;i++){
+				for (var j=0;j<3;j++){
+					if (pipAt(x+i,y+j) !== (df[i][j]==1)){
+						good=false;
+					}
+				}
+			}
+			if (good){
+				valid=true;
+				break;
+			}
+		}
+		return valid;
+		//doesn't overlap with existing würfeln
+	}
+
+
+	function würfelPunktzahl(x,y,candwürfeln){
+		var count=0;
+
+		//no overlapping dic
+		for (var i=0;i<candwürfeln.length;i++){
+			var [wx,wy]=candwürfeln[i];
+			var dx = x-wx;
+			var dy = y-wy;
+			if (dx>=0 && dx<=2 && dy>=0 && dy<=2){
+				count++;
+			}
+		}
+		return count;
+
+	}
+	function ersetzAugen(candwürfeln){
+
+		var curlevel=levels[level];
+		var level_b=curlevel[0].length;
+		var level_h=curlevel.length;
+
+		for (var i=0;i<entitäten.length;i++){
+			var e = entitäten[i];
+			var x = e[1];
+			var y = e[2];
+			if (e[0]!=="o"){
+				continue;
+			}
+			var zahl = würfelPunktzahl(x,y,candwürfeln)
+			if (zahl>0){
+				e[0]=""+zahl;
+				e[5]=0;
+				if (x<level_b/2){
+					spielstand[0]+=zahl;
+				} else {
+					spielstand[1]+=zahl;
+				}
+
+			}
+
+		}
+		
+	}
+
+	function würfelMelden(){
+
+		var curlevel=levels[level];
+		var level_b=curlevel[0].length;
+		var level_h=curlevel.length;
+		var candwürfeln=[];
+		for (var i=0;i<level_b-2;i++){			
+			for (var j=0;j<level_h-2;j++){
+				if (geltenderWürfelBei(i,j)){
+					candwürfeln.push([i,j,0]);
+				}
+			}
+		}
+		ersetzAugen(candwürfeln);
+		for (var i=0;i<candwürfeln.length;i++){
+			würfeln.push(candwürfeln[i]);
 		}
 	}
 
@@ -858,7 +1463,7 @@ function getVal(key, default_val){
 
 	function globalSetup(){
 
-		document.title = S("Augeschlepper","Pip Schlepper");
+		document.title = S("Augenschlepper","Pip Schlepper");
 		
 		document.onkeydown = checkKey;	
 		document.onkeyup = onKeyup;	
@@ -872,5 +1477,8 @@ function getVal(key, default_val){
 
 	window.onload =globalSetup;
 </script>
+
+<div id="bgcontainer"></div>
+<div id="svgcontainer"></div>
 </body>
 </html>
