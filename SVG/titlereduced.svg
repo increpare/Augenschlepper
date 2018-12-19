@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 97.5 57.5">
+<g id="Ebene_2" data-name="Ebene 2">
+    <g id="Ebene_5" data-name="Ebene 5">
+        <g id="TitelBildSchirm">
+            <rect class="seite-schatten" x="17.25" y="2.25" width="62" height="50"/>
+            <rect class="tbs-2" x="16.25" y="1.25" width="62" height="50"/>
+            <rect class="tbs-3" x="17.25" y="2.25" width="60" height="48"/>
+            <text id="TitelText" class="tbs-4" transform="translate(47.8 13.25)">AUGENSCHLEPPER</text>
+            <text id="MenuText" class="tbs-5" transform="translate(47.8 23.25) scale(0.85 1)">
+            		<tspan id="menü1" x="0" y="0">[ NEUES SPIEL ]</tspan>
+            		<tspan id="menü2" x="0" y="8.24">FORTSETZEN</tspan>
+            		<tspan id="menü3" x="0" y="16.48">SPRACHE:DEUTSCH</tspan>
+        </text>
+        <line class="tbs-6" x1="17.25" y1="14.25" x2="77.25" y2="14.25"/>
+
+        <rect class="seite-schatten" x="0.25" y="39.25" width="12" height="12" rx="1.52" transform="translate(-37 51.5) rotate(-90)"/>
+        <rect class="seite-schatten" x="0.25" y="21.25" width="12" height="12" rx="1.52" transform="translate(-19 33.5) rotate(-90)"/>
+        <rect class="seite-schatten" x="0.25" y="3.25" width="12" height="12" rx="1.52" transform="translate(-1 15.5) rotate(-90)"/>
+        <rect class="seite-schatten" x="79.25" y="39.25" width="12" height="12" rx="1.52" transform="translate(42 130.5) rotate(-90)"/>
+        <rect class="seite-schatten" x="79.25" y="21.25" width="12" height="12" rx="1.52" transform="translate(60 112.5) rotate(-90)"/>
+        <rect class="seite-schatten" x="79.25" y="3.25" width="12" height="12" rx="1.52" transform="translate(78 94.5) rotate(-90)"/>
+
+        <rect class="tbs-7" x="1.25" y="38.25" width="12" height="12" rx="1.52" transform="translate(-37 51.5) rotate(-90)"/>
+        <rect class="tbs-7" x="1.25" y="20.25" width="12" height="12" rx="1.52" transform="translate(-19 33.5) rotate(-90)"/>
+        <rect class="tbs-7" x="1.25" y="2.25" width="12" height="12" rx="1.52" transform="translate(-1 15.5) rotate(-90)"/>
+        <rect class="tbs-7" x="80.25" y="38.25" width="12" height="12" rx="1.52" transform="translate(42 130.5) rotate(-90)"/>
+        <rect class="tbs-7" x="80.25" y="20.25" width="12" height="12" rx="1.52" transform="translate(60 112.5) rotate(-90)"/>
+        <rect class="tbs-7" x="80.25" y="2.25" width="12" height="12" rx="1.52" transform="translate(78 94.5) rotate(-90)"/>
+        <circle class="tbs-8" cx="7.25" cy="44.25" r="1"/>
+        <circle class="tbs-8" cx="3.25" cy="30.25" r="1"/>
+        <circle class="tbs-8" cx="11.25" cy="22.25" r="1"/>
+        <circle class="tbs-8" cx="3.25" cy="12.25" r="1"/>
+        <circle class="tbs-8" cx="11.25" cy="4.25" r="1"/>
+        <circle class="tbs-8" cx="7.25" cy="8.25" r="1"/>
+        <circle class="tbs-8" cx="82.25" cy="48.25" r="1"/>
+        <circle class="tbs-8" cx="82.25" cy="40.25" r="1"/>
+        <circle class="tbs-8" cx="90.25" cy="40.25" r="1"/>
+        <circle class="tbs-8" cx="90.25" cy="48.25" r="1"/>
+        <circle class="tbs-8" cx="82.25" cy="30.25" r="1"/>
+        <circle class="tbs-8" cx="86.25" cy="26.25" r="1"/>
+        <circle class="tbs-8" cx="90.25" cy="30.25" r="1"/>
+        <circle class="tbs-8" cx="82.25" cy="22.25" r="1"/>
+        <circle class="tbs-8" cx="90.25" cy="22.25" r="1"/>
+        <circle class="tbs-8" cx="82.25" cy="4.25" r="1"/>
+        <circle class="tbs-8" cx="90.25" cy="4.25" r="1"/>
+        <circle class="tbs-8" cx="82.25" cy="12.25" r="1"/>
+        <circle class="tbs-8" cx="90.25" cy="12.25" r="1"/>
+        <circle class="tbs-8" cx="82.25" cy="8.25" r="1"/>
+        <circle class="tbs-8" cx="90.25" cy="8.25" r="1"/>
+        <text id="MitwerkenderText" class="tbs-9" transform="translate(19.25 49.01)">Font : &#x201E;Amatic SC&#x201C; von Vernon Adams</text>
+        <rect class="tbs-10" x="0.25" y="0.25" width="93" height="53"/>
+        <text id="SteuerungText" data-name="MitwerkenderText" class="tbs-11" transform="translate(19.25 45.25)">Steurung : Pfeiltasten, Z (R&#xFC;ckg&#xE4;ngig), R (neustart)</text>
+        <line class="tbs-12" x1="17.25" y1="46.25" x2="77.25" y2="46.25"/>
+    </g>
+</g>
+</g>
+</svg>

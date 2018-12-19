@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 93.5 53.5">
+<defs>
+    <style>
+    Code Beautifier CSS Formatierer und Optimierer basierend auf csstidy 1.3 sprache: en de fr ptAddThis CSS Eingabe CSS-Code: CSS von URL: Code Layout Komprimierung (Code Layout): Benutzerdefinierte Vorlage Optionen CSS erhalten Selektoren sortieren (Vorsicht) Eigenschaften sortieren Selektoren umgruppieren Shorthands optimieren Farben komprimieren font-weight komprimieren Selektoren in Kleinbuchstaben Groß-/Kleinschreibung für Eigenschaften Keine Kleinbuchstaben Großbuchstaben Unnötige Backslashes entfernen Letztes ;
+ entfernen Ungültige Eigenschaften entfernen Zeitstempel hinzufügen Als Datei ausgeben Anzeigen 1 Invalid property in CSS2.1: fill Invalid property in CSS2.1: opacity Invalid property in CSS2.1: stroke Invalid property in CSS2.1: stroke-linejoin Optimised number: Changed "0.25px" to ".25px" Invalid property in CSS2.1: stroke-width Invalid property in CSS2.1: stroke-miterlimit Optimised number: Changed "0.5px" to ".5px" Optimised number: Changed "0.1px" to ".1px" Eingabe: 0.62KB, Ausgabe:0.693KB, Komprimierungsrate: -11.8% (+73 Bytes) Auserwählt oder Copy .cls-1,.cls-11,.cls-4,.cls-5,.cls-8,.cls-9 {
+     fill:#231f20;
+}
+ .cls-1 {
+     opacity:0.2;
+}
+ .cls-2,.cls-3,.cls-7 {
+     fill:#fff;
+}
+ .cls-12,.cls-3,.cls-6,.cls-7,.cls-8 {
+     stroke:#231f20;
+}
+ .cls-3 {
+     stroke-linejoin:round;
+     stroke-width:.25px;
+}
+ .cls-4 {
+     font-size:12px;
+     font-family:AmaticSC-Bold, Amatic SC;
+     font-weight:700;
+}
+ .cls-5 {
+     font-size:8.09px;
+}
+ .cls-11,.cls-5,.cls-9 {
+     font-family:AmaticSC-Regular, Amatic SC;
+}
+ .cls-10,.cls-12,.cls-6 {
+     fill:none;
+}
+ .cls-10,.cls-12,.cls-6,.cls-7,.cls-8 {
+     stroke-miterlimit:10;
+}
+ .cls-10,.cls-6,.cls-7,.cls-8 {
+     stroke-width:.5px;
+}
+ .cls-9 {
+     font-size:2.63px;
+}
+ .cls-10 {
+     stroke:#ed1c24;
+}
+ .cls-11 {
+     font-size:3.49px;
+}
+ .cls-12 {
+     stroke-width:.1px;
+}
+
+</style>
+</defs>
+<title>TitelBildSchirm</title>
+<g id="Ebene_2" data-name="Ebene 2">
+    <g id="Ebene_5" data-name="Ebene 5">
+        <g id="TitelBildSchirm">
+            <rect class="cls-1" x="17.25" y="2.25" width="62" height="50"/>
+            <rect class="cls-2" x="16.25" y="1.25" width="62" height="50"/>
+            <rect class="cls-3" x="17.25" y="2.25" width="60" height="48"/>
+            <text id="TitelText" class="cls-4" transform="translate(20.51 13.25)">AUGENSCHLEPPER</text>
+            <text id="MenuText" class="cls-5" transform="translate(34.37 23.25) scale(0.85 1)">&gt;NEUES SPIEL&lt;<tspan x="3.16" y="8.24">FORTSETZEN</tspan>
+            <tspan x="-3.34" y="16.47">SPRACHE:DEUTSCH</tspan>
+        </text>
+        <line class="cls-6" x1="17.25" y1="14.25" x2="77.25" y2="14.25"/>
+        <rect class="cls-7" x="1.25" y="38.25" width="12" height="12" rx="1.52" transform="translate(-37 51.5) rotate(-90)"/>
+        <rect class="cls-7" x="1.25" y="20.25" width="12" height="12" rx="1.52" transform="translate(-19 33.5) rotate(-90)"/>
+        <rect class="cls-7" x="1.25" y="2.25" width="12" height="12" rx="1.52" transform="translate(-1 15.5) rotate(-90)"/>
+        <rect class="cls-7" x="80.25" y="38.25" width="12" height="12" rx="1.52" transform="translate(42 130.5) rotate(-90)"/>
+        <rect class="cls-7" x="80.25" y="20.25" width="12" height="12" rx="1.52" transform="translate(60 112.5) rotate(-90)"/>
+        <rect class="cls-7" x="80.25" y="2.25" width="12" height="12" rx="1.52" transform="translate(78 94.5) rotate(-90)"/>
+        <circle class="cls-8" cx="7.25" cy="44.25" r="1"/>
+        <circle class="cls-8" cx="3.25" cy="30.25" r="1"/>
+        <circle class="cls-8" cx="11.25" cy="22.25" r="1"/>
+        <circle class="cls-8" cx="3.25" cy="12.25" r="1"/>
+        <circle class="cls-8" cx="11.25" cy="4.25" r="1"/>
+        <circle class="cls-8" cx="7.25" cy="8.25" r="1"/>
+        <circle class="cls-8" cx="82.25" cy="48.25" r="1"/>
+        <circle class="cls-8" cx="82.25" cy="40.25" r="1"/>
+        <circle class="cls-8" cx="90.25" cy="40.25" r="1"/>
+        <circle class="cls-8" cx="90.25" cy="48.25" r="1"/>
+        <circle class="cls-8" cx="82.25" cy="30.25" r="1"/>
+        <circle class="cls-8" cx="86.25" cy="26.25" r="1"/>
+        <circle class="cls-8" cx="90.25" cy="30.25" r="1"/>
+        <circle class="cls-8" cx="82.25" cy="22.25" r="1"/>
+        <circle class="cls-8" cx="90.25" cy="22.25" r="1"/>
+        <circle class="cls-8" cx="82.25" cy="4.25" r="1"/>
+        <circle class="cls-8" cx="90.25" cy="4.25" r="1"/>
+        <circle class="cls-8" cx="82.25" cy="12.25" r="1"/>
+        <circle class="cls-8" cx="90.25" cy="12.25" r="1"/>
+        <circle class="cls-8" cx="82.25" cy="8.25" r="1"/>
+        <circle class="cls-8" cx="90.25" cy="8.25" r="1"/>
+        <text id="MitwerkenderText" class="cls-9" transform="translate(19.25 49.01)">Font : &#x201E;Amatic SC&#x201C; von Vernon Adams</text>
+        <rect class="cls-10" x="0.25" y="0.25" width="93" height="53"/>
+        <text id="MitwerkenderText-2" data-name="MitwerkenderText" class="cls-11" transform="translate(19.25 45.25)">Steurung : Pfeiltasten, Z (R&#xFC;ckg&#xE4;ngig), R (neustart)</text>
+        <line class="cls-12" x1="17.25" y1="46.25" x2="77.25" y2="46.25"/>
+    </g>
+</g>
+</g>
+</svg>
