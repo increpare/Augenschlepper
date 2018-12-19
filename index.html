@@ -33,6 +33,8 @@
 		  --bg-mauerlinie : rgba(0,0,0,0.2);
 		  --bg-seite : rgb(100,150,255);
 		  --seite-schatten : rgba(0,0,0,0.2);
+		  -webkit-backface-visibility: hidden;
+		  -backface-visibility: hidden;
 		}
 
 
@@ -179,6 +181,14 @@
 			stroke:var(--fg);
 		}
 
+
+		.auge_dunkelFadeIn {
+			stroke:none;
+			fill:var(--fg);
+		}
+
+
+
 		.auge_dunkel{
 			fill:var(--fg);
 			stroke:var(--fg);
@@ -313,6 +323,9 @@
 <script>
 
 var editmodus=false;
+
+var movedur=0.1;
+var fadeindur=0.2;
 
 var level=0;
 
@@ -543,9 +556,11 @@ function getVal(key, default_val){
 					level=0;
 					setVal("savedlevel",0);
 					setGameState("SPIEL");
+					return;
 				} else if (titelindex===1){
 					level=savedlevel;
 					setGameState("SPIEL");
+					return;
 				} else if (titelindex===2){
 					wechselsprache();
 				} else if (titelindex===3){
@@ -854,7 +869,7 @@ function getVal(key, default_val){
 		titeltext_el.textContent=titel_str;
 		document.title = titel_str;
 
-		mitwerkendertext_el.textContent = S("Font : „Amatic SC“ von Vernon Adams",'Font : "Amatic SC" by Vernon Adams');
+		mitwerkendertext_el.textContent = S("Font : „Amatic SC“ von Vernon Adams",'Font : “Amatic SC” by Vernon Adams');
 		steuerungtext_el.textContent = S("Steurung : Pfeiltasten, Z (Rückgängig), R (neustart)","Controls : Arrow Keys, Z (Undo), R (Restart)");
 		menü1_el.textContent= S("Neues Spiel","New Game").toUpperCase();
 		menü2_el.textContent= S("Fortfahren","Continue").toUpperCase();
@@ -899,6 +914,13 @@ function getVal(key, default_val){
 <g id="Ebene_2" data-name="Ebene 2">
     <g id="Ebene_5" data-name="Ebene 5">
         <g id="TitelBildSchirm">
+                <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          from="0 -50"
+                          to="0 0"
+                          dur="0.4s"
+                          repeatCount="once"/>
             <rect class="seite-schatten" x="17.25" y="2.25" width="62" height="50"/>
             <rect class="tbs-2" x="16.25" y="1.25" width="62" height="50"/>
             <rect class="tbs-3" x="17.25" y="2.25" width="60" height="48"/>
@@ -1164,7 +1186,7 @@ function getVal(key, default_val){
 		} else if (s==null){
 			entitäten.push(["s",x,y,x,y]);
 		} else {
-			entitäten.push(["o",x,y,x,y]);
+			entitäten.push(["o",x,y,x,y,"o"]);
 			if (würfelAt(x,y,würfeln)==true){
 				würfelNeuberechnen();	
 			} else {
@@ -1196,6 +1218,9 @@ function getVal(key, default_val){
 
 
 		var genbg = lastlb!==level_b||lastlh!==level_h;
+
+	
+
 		lastlb=level_b;
 		lastlh=level_h;
 
@@ -1222,6 +1247,8 @@ function getVal(key, default_val){
 		var o_seite_b=o_spielplatz_b+linie_seite_rand;
 		var o_seite_h=o_spielplatz_h+linie_seite_rand+24;
 
+
+
 		var svg=`
 <svg id="svg_fg" viewBox="0 0 ${o_screen_b} ${o_screen_h}" xmlns="http://www.w3.org/2000/svg" onmousedown="klicken(event)">
 
@@ -1237,10 +1264,19 @@ function getVal(key, default_val){
 
 
 </defs>
+<g>`
 
-
-
+if (genbg){
+svg+=`<animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          from="0 50"
+                          to="0 0"
+                          dur="0.2s"
+                          repeatCount="once"/>
 `
+}
+
 let svgbg=``;
 
 if (genbg){
@@ -1253,7 +1289,15 @@ svgbg=`
 
 </defs>
 
+<g>
 
+                <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          from="0 50"
+                          to="0 0"
+                          dur="0.2s"
+                          repeatCount="once"/>
 <rect x="${o_seite_rand_x+linie_exterior/4}" y="${o_seite_rand_y+linie_exterior/4}" width="${o_seite_b}" height="${o_seite_h}" class="seite-schatten" />
 
 <rect id='seite' x="${o_seite_rand_x}" y="${o_seite_rand_y}" width="${o_seite_b}" height="${o_seite_h}" class="seite" />
@@ -1309,11 +1353,12 @@ svgbg=`
 			var wy=1+o_bildschirm_rand_y+o_bildschirm_zelle_g_h*würfel[1];
 			var wg=12*3-2;
 			
-			svg+=`<rect class="würfel-hg" x="${wx}" y="${wy}" width="${wg}" height="${wg}" rx="5">`
 
 			 if (würfel[2]===0){
-				würfel[2]=1;
-				// svg+=`<animate attributeName="opacity" from="0" to="1" dur="0.2s"  />`;
+			 	svg+=`<rect class="würfel-hg" opacity="0" x="${wx}" y="${wy}" width="${wg}" height="${wg}" rx="5">`
+				svg+=`<animate attributeName="opacity" begin="${movedur}s" from="0" to="1" dur="${fadeindur}s" fill="freeze" />`;
+			 } else {
+			 	svg+=`<rect class="würfel-hg" x="${wx}" y="${wy}" width="${wg}" height="${wg}" rx="5">`
 			 }
 
 			svg+=`</rect>`
@@ -1322,6 +1367,25 @@ svgbg=`
 		}
 
 
+		for (var i=0;i<würfeln.length;i++){
+			var würfel=würfeln[i];
+			var wx=1+o_bildschirm_rand_x+o_bildschirm_zelle_g_b*würfel[0];
+			var wy=1+o_bildschirm_rand_y+o_bildschirm_zelle_g_h*würfel[1];
+			var wg=12*3-2;
+			
+
+			 if (würfel[2]===0){
+				würfel[2]=1;
+				svg+=`<rect class="würfel-umriss" x="${wx}" y="${wy}" stroke-opacity="0" width="${wg}" height="${wg}" rx="5">`
+				svg+=`<animate attributeName="stroke-opacity" begin="${movedur}s" from="0" to="1" dur="${fadeindur}s" fill="freeze" />`;
+			 } else {
+				svg+=`<rect class="würfel-umriss" x="${wx}" y="${wy}" width="${wg}" stroke-opacity="1" height="${wg}" rx="5">`
+			 }
+
+			 svg+="</rect>";
+			// svg+=`<g class="#${entität[0]}" transform="translate(${ox},${oy})">`
+		}
+		
 		// for (var i=0;i<würfeln.length;i++){
 		// 	var würfel=würfeln[i];
 		// 	var wx=1+o_bildschirm_rand_x+o_bildschirm_zelle_g_b*würfel[0];
@@ -1337,20 +1401,29 @@ svgbg=`
 			var entität=entitäten[i];
 			var ox=o_bildschirm_rand_x+o_bildschirm_zelle_g_b*entität[1];
 			var oy=o_bildschirm_rand_y+o_bildschirm_zelle_g_h*entität[2];
-			svg+=`<g class="#${entität[0]}" transform="translate(${ox},${oy})">
-`			
+			var ot = entität[0];
+
 			var lx = o_bildschirm_rand_x+o_bildschirm_zelle_g_b*entität[3];
 			var ly = o_bildschirm_rand_y+o_bildschirm_zelle_g_h*entität[4];
-			if (ox!==lx||oy!==ly){
-				// svg+=`<animateTransform attributeName="transform"
-	   //                        attributeType="XML"
-	   //                        type="translate"
-	   //                        from="${lx} ${ly}"
-	   //                        to="${ox} ${oy}"
-	   //                        dur="0.1s"/>`;
+			var lt = entität[5];
+			var transforming=false;
+			if (ox!==lx||oy!==ly||ot!==lt){
+				transforming=true;
+				svg+=`<g id="spr${i}" class="#${entität[0]}" transform="translate(${lx},${ly})">`
+				svg+=`<animateTransform attributeName="transform"
+	                          attributeType="XML"
+	                          type="translate"
+	                          from="${lx} ${ly}"
+	                          to="${ox} ${oy}"
+	                          dur="${movedur}"
+	                          fill="freeze"/>`;
 	            entität[3]=entität[1];
 	            entität[4]=entität[2];
+	            entität[5]=entität[0];
+	        } else {
+	        	svg+=`<g id="spr${i}" class="#${entität[0]}" transform="translate(${ox},${oy})">`
 	        }
+
 			switch(entität[0]){
 				case "F"://FEUER
 					svg+=`
@@ -1388,24 +1461,26 @@ svgbg=`
 					<line class="spieler_innen" x1="9" y1="5.57" x2="6" y2="3.86"/>
 					<line class="spieler_innen" x1="6" y1="6.43" x2="6" y2="3"/>
 					<line class="spieler_innen" x1="5" y1="3" x2="7" y2="3"/>
-
 				`//FEUERSPIELER
 				break;
 
 				default://Auge
+
+					if (transforming){
+						svg+=`<circle class="auge_leer" cx="6" cy="6" r="3"  />`
+						svg+=`<circle class="auge_dunkelFadeIn" opacity="0" cx="6" cy="6" r="3"  >`
+          				svg+=`<animate attributeName="opacity" from="0" to="1" begin="${movedur}s" dur="${fadeindur}s" fill="freeze"></animate>`
+						svg+=`</circle>`
+						svg+=`<text x=6 y=6 class="scoretext" >`
+					} else {
 				svg+=`
 					<circle class="auge_dunkel" cx="6" cy="6" r="3"  />`
-
-					if (entität[5]===0){
-						// svg+=`<animate attributeName="fill" from="rgba(0,0,0,0)" to="rgba(0,0,0,1)" dur="10s"  />`;
+						svg+=`</circle>
+						<text x=6 y=6 class="scoretext">`
 					}
-
-					svg+=`</circle>
-					<text x=6 y=6 class="scoretext">`
 
 					if (entität[5]===0){
 						entität[5]=1;
-						// svg+=`<animate attributeName="opacity" from="0" to="1" dur="0.3s"  />`;
 					}
 					svg+=`${entität[0]}
 					</text>
@@ -1415,27 +1490,11 @@ svgbg=`
 
 
 
+
 			svg+="</g>"
 		}
 
 
-		for (var i=0;i<würfeln.length;i++){
-			var würfel=würfeln[i];
-			var wx=1+o_bildschirm_rand_x+o_bildschirm_zelle_g_b*würfel[0];
-			var wy=1+o_bildschirm_rand_y+o_bildschirm_zelle_g_h*würfel[1];
-			var wg=12*3-2;
-			
-			svg+=`<rect class="würfel-umriss" x="${wx}" y="${wy}" width="${wg}" height="${wg}" rx="5">`
-
-			 if (würfel[2]===0){
-				würfel[2]=1;
-				// svg+=`<animate attributeName="opacity" from="0" to="1" dur="0.2s"  />`;
-			 }
-
-			 svg+="</rect>";
-			// svg+=`<g class="#${entität[0]}" transform="translate(${ox},${oy})">`
-		}
-		
 
 {
 			//header
@@ -1483,10 +1542,10 @@ svgbg=`
 		}
 
 
-	svg+=`Sorry, your browser does not support inline SVG and so you can't play this game sadface.</svg>`;
+	svg+=`</g>Sorry, your browser does not support inline SVG and so you can't play this game sadface.</svg>`;
 
 	if (genbg){
-		svgbg+="</svg>"
+		svgbg+="</g></svg>"
 		document.getElementById("bgcontainer").innerHTML=svgbg;
 	}
 	document.getElementById("svgcontainer").innerHTML=svg;
