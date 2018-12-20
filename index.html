@@ -537,6 +537,17 @@ function getVal(key, default_val){
 		}
 	}
 
+
+	function getSpielerIndex(){
+		for (let i=0;i<entitäten.length;i++){
+			if (entitäten[i][0]==="s"){
+				return i;
+			}
+		}
+		return null;
+	}
+
+
 	function getSpieler(){
 		for (let i=0;i<entitäten.length;i++){
 			if (entitäten[i][0]==="s"){
@@ -609,6 +620,59 @@ function getVal(key, default_val){
 		return true;
 	}
 
+	function schütteleEntität(e_index,dx,dy,delay,amount,duration){
+		var entität_el = document.getElementById("spr"+e_index);
+		var entität = entitäten[e_index];
+
+		let linie_exterior=4;
+		let linie_seite_rand=2;
+
+		let o_bildschirm_rand_x=(linie_exterior+linie_seite_rand)/2;
+		let o_bildschirm_rand_y=(linie_exterior+linie_seite_rand)/2+24;
+
+
+		let o_bildschirm_zelle_g_b=12;
+		let o_bildschirm_zelle_g_h=12;
+
+
+		//bestehende animaationine entfernen
+		for (var i=0;i<entität_el.childNodes.length;i++){
+			var cn = entität_el.childNodes[i];
+			if (cn.nodeName.toLowerCase()==="animatetransform"){
+				cn.remove();
+			}
+		}
+
+`<animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          from="0 -50"
+                          to="0 0"
+                          dur="0.4s"
+                          repeatCount="once"/>`
+        
+
+		let ox=o_bildschirm_rand_x+o_bildschirm_zelle_g_b*entität[1];
+		let oy=o_bildschirm_rand_y+o_bildschirm_zelle_g_h*entität[2];
+        entität_el.setAttribute("transform",`translate(${ox},${oy})`)              
+        entität_el.setAttribute("opacity",`"0.5"`)              
+
+        let cx=0;
+        let cy=0;
+        var anim = document.createElementNS('http://www.w3.org/2000/svg','animateTransform');
+                anim.setAttributeNS(null, 'attributeName', 'transform');
+                anim.setAttributeNS(null, 'type', 'translate');
+
+				anim.setAttributeNS(null, 'values', `${ox},${oy};${ox+dx*amount},${oy+dy*amount};${ox},${oy}`);
+
+                anim.setAttributeNS(null, 'begin', 'indefinite');
+                anim.setAttributeNS(null, 'dur', `${duration}s`);
+        entität_el.appendChild(anim);
+        
+        anim.beginElementAt(delay);
+            
+	}
+
 	function onSpielInput(k){
 		console.log(k);
 		if (k<4){
@@ -617,6 +681,7 @@ function getVal(key, default_val){
 			let tx = player[1]+dx;
 			let ty = player[2]+dy;
 			if (inBounds(tx,ty)===false){
+				schütteleEntität(getSpielerIndex(),dx,dy,0,2,0.1);
 				return;
 			}
 			let pip = getPipAt(tx,ty); 
@@ -635,10 +700,38 @@ function getVal(key, default_val){
 			{
 				player[1]=tx;
 				player[2]=ty;
+	    		render();
+	    		zustandSpeichern();
+			} else {
+				let ttx=tx+dx;
+				let tty=ty+dy;
+				let pipindex=entitäten.indexOf(pip);
+				var tpip=getPipAt(ttx,tty);
+				//fälle
+				// if (inBounds(ttx,tty)==false){
+				// //1 - pip am rand (spielplatz )
+				// 	var duration=0.3;
+				// 	//(e_index,dx,dy,delay,amount,duration)
+				// 	schütteleEntität(pipindex,dx,dy,duration*0.333,2,duration*0.333);
+				// 	schütteleEntität(getSpielerIndex(),dx,dy,0,6,duration);	
+				// } else if (würfelÜberlappung(ttx,tty)){
+				// 	//1 - pip am rand (würfel )
+				// 	schütteleEntität(pipindex,dx,dy,duration*0.333,2,duration*0.333);
+				// 	schütteleEntität(getSpielerIndex(),dx,dy,0,6,duration);						
+				// }else if (tpip!==null && tpip[0]!=="o"){
+				// 	var duration=0.3;
+				// 	//(e_index,dx,dy,delay,amount,duration)
+				// 	schütteleEntität(getSpielerIndex(),dx,dy,0,4,0.1);					
+				// }else if (tpip!==null){
+				// 	var duration=0.3;
+				// 	//(e_index,dx,dy,delay,amount,duration)
+				// 	schütteleEntität(pipindex,dx,dy,duration*0.2,6,duration*0.6);
+				// 	schütteleEntität(getSpielerIndex(),dx,dy,0,10,duration);						
+				// }
+				schütteleEntität(getSpielerIndex(),dx,dy,0,2,0.1);
+
 			}
 
-	    	render();
-	    	zustandSpeichern();
 		} else if (k===5){//undo
 			rückgängig();
 			render();
@@ -1671,6 +1764,17 @@ function getRandomInt(min, max) {
 		],
 
 	];
+
+	function würfelÜberlappung(x,y){
+		for (let i=0;i<würfeln.length;i++){
+			var [wx,wy]=würfeln[i];
+			if (Math.abs(wx-x)<=2.1 && Math.abs(wy-y)<=2.1){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	function geltenderWürfelBei(x,y){
 		//no overlapping dic
 		for (let i=0;i<würfeln.length;i++){
