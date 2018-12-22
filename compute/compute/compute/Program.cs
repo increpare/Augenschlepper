@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.IO;
 
 
 static class MainClass
@@ -69,6 +69,50 @@ static class MainClass
     }
 
 
+
+
+    //-1 all bad, 0 mixed, 1 all good
+    public static List<(int,int)> würfelpositionenausrechnen(int[] state, int H, int B)
+    {
+        List<(int, int)> ergebnis = new List<(int, int)>();
+
+       //elemente ändern a=3 wenn pie ein teil eines Musters ist
+       int score = 0;
+
+        for (var i = 0; i < B - 2; i++)
+        {
+            for (var j = 0; j < H - 2; j++)
+            {
+                var facemask =
+                      ((state[i + 0 + B * (j + 0)] & 1) << 0)
+                    + ((state[i + 1 + B * (j + 0)] & 1) << 1)
+                    + ((state[i + 2 + B * (j + 0)] & 1) << 2)
+                    + ((state[i + 0 + B * (j + 1)] & 1) << 3)
+                    + ((state[i + 1 + B * (j + 1)] & 1) << 4)
+                    + ((state[i + 2 + B * (j + 1)] & 1) << 5)
+                    + ((state[i + 0 + B * (j + 2)] & 1) << 6)
+                    + ((state[i + 1 + B * (j + 2)] & 1) << 7)
+                    + ((state[i + 2 + B * (j + 2)] & 1) << 8);
+
+                if (facemask == 0)
+                {
+                    continue;
+                }
+
+                for (var k = 0; k < dicefaces.Length; k++)
+                {
+                    if (dicefaces[k] == facemask)
+                    {
+                        ergebnis.Add((i,j));
+                        break;
+                    }
+                }
+            }
+        }
+
+
+        return ergebnis;
+    }
 
     //-1 all bad, 0 mixed, 1 all good
     public static int geltend(int[] state, int H, int B)
@@ -346,8 +390,12 @@ static class MainClass
         //Console.WriteLine($"Bounds: ({linkeSpalte},{obereZeile}) -> ({rechteSpalte},{untereZeile})");
 
         var g_b = rechteSpalte - linkeSpalte + 1;
-        var g_h = untereZeile - obereZeile + 1;
-
+        int g_h = untereZeile - obereZeile + 1;
+        bool swapxy = g_b > g_h;
+        if (swapxy)
+        {
+            (g_b, g_h) = (g_h, g_b);
+        }
 
         var subrect = new int[g_b * g_h];
 
@@ -357,11 +405,15 @@ static class MainClass
             {
                 var i_local = x + g_b * y;
                 var i_global = linkeSpalte + x + B*(obereZeile+y );
+                if (swapxy)
+                {
+                    i_global = linkeSpalte + y + B * (obereZeile + x);
+                }
                 subrect[i_local] = ar[i_global];
             }
-        }
-        subrect = normalize(subrect, g_h, g_b);
-        return hash(subrect);
+        }  
+        var normalizierter_subrect = normalize(subrect, g_h, g_b);
+        return hash(normalizierter_subrect);
     }
 
     public static int hash(int[] ar)
@@ -401,7 +453,7 @@ static class MainClass
                         {
                             var prestate = (int[])orig.Clone();
                             prestate[i - 1 + B * j] = 5;
-                            prestate[i + B * j] = 0;
+                            prestate[i + B * j] = -1-3;
                             result.Add(prestate);
                         }
                     }
@@ -413,7 +465,7 @@ static class MainClass
                             //push left
                             var prestate = (int[])orig.Clone();
                             prestate[i + 1 + B * j] = 5;
-                            prestate[i + B * j] = 0;
+                            prestate[i + B * j] = -1 - 2;
                             result.Add(prestate);
                         }
                     }
@@ -426,7 +478,7 @@ static class MainClass
                             //push up
                             var prestate = (int[])orig.Clone();
                             prestate[i + B * (j - 1)] = 5;
-                            prestate[i + B * (j)] = 0;
+                            prestate[i + B * (j)] = -1 - 1;
                             result.Add(prestate);
 
                         }
@@ -439,7 +491,7 @@ static class MainClass
                             //push up
                             var prestate = (int[])orig.Clone();
                             prestate[i + B * (j + 1)] = 5;
-                            prestate[i + B * (j)] = 0;
+                            prestate[i + B * (j)] = -1 - 0;
                             result.Add(prestate);
 
                         }
@@ -470,7 +522,7 @@ static class MainClass
         }
 
         var leerespalten = true;
-        for (var j = 2; j < H; j++)
+        for (var j = 0; j < H; j++)
         {
             if (orig[0 + B * (j)] == 1 || orig[1 + B * (j)] == 1 || orig[B-1 + B * (j)] == 1)
             {
@@ -661,13 +713,13 @@ static class MainClass
 
                 if (v == 0)
                 {
-                    sb.Append('.');
+                    sb.Append('·');
                 } else if (maskmode)
                 {
-                    sb.Append('O');
+                    sb.Append('○');
                 } else 
                 {
-                    sb.Append(v);
+                    sb.Append(" ①②③④⑤⑥⑦⑧⑨"[v]);
                 }
             }
             sb.Append('\n');
@@ -675,52 +727,54 @@ static class MainClass
         return sb.ToString();
     }
 
-    public static string printMapPair(int[] arr, int[] arr2, int H, int B)
+    public static string printMapPair(List<int[]> arr, int[] arr2, int H, int B)
     {
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-
+        sb.Append("┌");
+        for (var i = 0; i < B; i++)
+        {
+            sb.Append('─');
+        }
+        sb.Append("┐\n");
         for (var j = 0; j < H; j++)
         {
-            for (var i = 0; i < B; i++)
-            {
-                var v = arr[i + B * j];
-
-                if (v == 0)
-                {
-                    sb.Append('.');
-                }
-                else 
-                {
-                    sb.Append('O');
-                }
-            }
-            sb.Append("    ");
-
+            sb.Append("│");
             for (var i = 0; i < B; i++)
             {
                 var v = arr2[i + B * j];
 
                 if (v == 0)
                 {
-                    if (arr[i + B * j] == 5)
+                    if (arr.Any(a => a[i + B * j] == 5))
                     {
-                        sb.Append('*');
+                        sb.Append('◌');
                     }
                     else
                     {
-                        sb.Append('.');
+                        sb.Append(' ');
                     }
                 }
                 else
                 {
-                    sb.Append(v);
+                    sb.Append(" ❶❷❸❹❺❻❼❽❾"[v]);
                 }
             }
+            sb.Append("│\n");
 
-            sb.Append('\n');
         }
+
+        sb.Append("└");
+        for (var i = 0; i < B; i++)
+        {
+            sb.Append('─');
+        }
+        sb.Append("┘\n");
+
         return sb.ToString();
+
+
+
     }
 
     public static IEnumerable<TSource> DistinctBy<TSource, TKey>
@@ -736,23 +790,18 @@ static class MainClass
         }
     }
 
-    public static void Main()
+    static void DoGenerate(int H, int B, int AUGE_ZAHL, bool doopen)
     {
-
-
-        const int H = 6;
-        const int B = 6;
-        const int AUGE_ZAHL = 4;
 
 
         var init = new int[H * B];
         //var subsets = new List<int[]>();
         //Console.WriteLine("generating subsets series");
 
-        Console.WriteLine("generating subsets parallel");
+        Console.WriteLine($"{AUGE_ZAHL}:{H}x{B} generating subsets parallel");
         var watch2 = System.Diagnostics.Stopwatch.StartNew();
 
-        var subsets = par_generateSubsets(AUGE_ZAHL, 0, init,H,B);
+        var subsets = par_generateSubsets(AUGE_ZAHL, 0, init, H, B);
 
 
         watch2.Stop();
@@ -762,30 +811,100 @@ static class MainClass
         Console.WriteLine("generated");
         //1 generate final states
 
-        Console.WriteLine($"ss length before {subsets.Length}.");
-        subsets = subsets.DistinctBy(ss => boundshash(ss,H,B)).ToArray();
-        Console.WriteLine($"ss length after {subsets.Length}.");
+        subsets = subsets.DistinctBy(ss => boundshash(ss, H, B)).ToArray();
 
         var scoreset = subsets
-                        .Where(ss => perturbations(ss,H,B).Count > 0)
-                        .Select(o => scoreausrechnen(o,H,B))
-                        .OrderBy(n=>n).Distinct().ToArray();
+                        .Where(ss => perturbations(ss, H, B).Count > 0)
+                        .Select(o => scoreausrechnen(o, H, B))
+                        .OrderBy(n => n).Distinct().ToArray();
 
         subsets = subsets.OrderBy(o => scoreausrechnen(o, H, B)).ToArray();
 
-        var score_0 = subsets.Count(s => scoreausrechnen(s, H, B) == scoreset[0]);
-        var score_1 = subsets.Count(s => scoreausrechnen(s, H, B) == scoreset[1]);
+        var ss0 = scoreset.Length < 1 ? -1 : scoreset[0];
+        var ss1 = scoreset.Length < 2 ? -1 : scoreset[1];
+        var ssnm1 = scoreset.Length < 2 ? -1 : scoreset[scoreset.Length - 2];
+        var ssn = scoreset.Length < 1 ? -1 : scoreset[scoreset.Length - 1];
+
+        var score_0 = scoreset.Length < 1 ?-1: subsets.Count(s => scoreausrechnen(s, H, B) == ss0);
+        var score_1 =scoreset.Length<2?-1: subsets.Count(s => scoreausrechnen(s, H, B) == ss1);
 
 
-        var score_nm1 = subsets.Count(s => scoreausrechnen(s, H, B) == scoreset[scoreset.Length - 2]);
-        var score_n = subsets.Count(s => scoreausrechnen(s, H, B) == scoreset[scoreset.Length-1]);
+        var score_nm1 = scoreset.Length < 2 ? -1 : subsets.Count(s => scoreausrechnen(s, H, B) == ssnm1);
+        var score_n = scoreset.Length < 1 ? -1 : subsets.Count(s => scoreausrechnen(s, H, B) == ssn);
 
         var count = subsets.Count();
-        Console.WriteLine($"{count} configurations found, with scores from {scoreset[0]} to {scoreset[scoreset.Length-1]}.");
-        Console.WriteLine($"{score_0} have score of {scoreset[0]}.");
-        Console.WriteLine($"{score_1} have score of {scoreset[1]}.");
-        Console.WriteLine($"{score_nm1} have score of {scoreset[scoreset.Length - 2]}.");
-        Console.WriteLine($"{score_n} have score of {scoreset[scoreset.Length - 1]}.\n");
+
+
+        var html_template = $@"
+<!DOCTYPE html>
+<html>
+<head> 
+     <meta charset='UTF-8'>
+
+      <title>{AUGE_ZAHL} Augen {B}x{H}</title>
+
+    <style>
+ul{{
+  list-style: none;
+}}
+
+li{{
+  padding: 10px;
+}}
+    .zahltext {{
+        dominant-baseline: central;
+        text-anchor: middle;
+    }}
+
+    .rasterlinie {{
+        stroke-width:0.5;
+        stroke:lightgray;
+    }}
+
+    .auge {{
+        stroke:black;
+        fill:none;
+    }}
+
+    .würfel-hg {{
+        stroke:none;
+        fill:white;
+    }}
+
+    .würfel-vg {{
+        stroke:lightgray;
+        fill:none;
+    }}
+
+    .bewegungpfeil {{
+        stroke:gray;
+        fill:none;
+    }}
+
+    .bewegungpunkt {{
+        stroke:black;
+        fill:white;
+    }}
+    </style>
+</head>
+<body>
+<h1>{AUGE_ZAHL} Augen {B}x{H}</h1>
+<p>
+    <ul>
+<li>{count} Gestaltungen gefunden, mit Scores zwischen {ss0} und {ssn}.
+<li>{score_0} haben das Score {ss0}.
+<li>{score_1} haben das Score  {ss1}.
+<li>...
+<li>{score_nm1} haben das Score {ssnm1}.
+<li>{score_n} haben das Score {ssn}.
+</ul>
+<hr>
+    </p>
+";
+
+        html_template += "<ul>";
+
+        var z_g = 30;
 
         for (var i = 0; i < subsets.Length; i++)
         {
@@ -795,11 +914,212 @@ static class MainClass
             {
                 continue;
             }
-            Console.WriteLine("\n\n----------\n\n");
-            Console.WriteLine(printMapPair(perturbs[0], zählAugen(subset, H, B),H,B));
-            var score = scoreausrechnen(subset,H,B);
-            Console.WriteLine("Score:"+score);
+            html_template += "<li>";
 
+            var score = scoreausrechnen(subset, H, B);
+            html_template += ($"Score: {score}<br>");
+
+            var svg_b = z_g * B;
+            var svg_h = z_g * H;
+            html_template += $@"<svg width = '{svg_b}' height = '{svg_h}' >";
+
+            //1 raster
+            for (var i2 = 0; i2 <= B; i2++)
+            {
+                int x1 = i2 * z_g;
+                int y1 = 0;
+                int x2 = i2 * z_g;
+                int y2 = H * z_g;
+                html_template += $@" <line x1 = '{x1}' y1 = '{y1}' x2 = '{x2}' y2 = '{y2}' class='rasterlinie' />";
+            }
+            for (var i2 = 0; i2 <= H; i2++)
+            {
+                int x1 = 0;
+                int y1 = i2 * z_g;
+                int x2 = B * z_g;
+                int y2 = i2 * z_g;
+                html_template += $@" <line x1 = '{x1}' y1 = '{y1}' x2 = '{x2}' y2 = '{y2}' class='rasterlinie' />";
+            }
+
+            //würfel
+
+            var würfelpositionen = würfelpositionenausrechnen(subset,H,B);
+            foreach(var (wi,wj) in würfelpositionen)
+            {
+                double r = (z_g / 2.0) * 0.8;
+                double m = 0.05;
+                double wx = (wi+m) * z_g;
+                double wy = (wj+m) * z_g;
+
+                double wh = (3-2*m) * z_g;
+                double wb = (3-2*m) * z_g;
+                html_template += $@"<rect class='würfel-hg'  x='{wx}' y='{wy}' width='{wh}' height='{wb}' rx='{r }'/>";
+            }
+
+            foreach (var (wi, wj) in würfelpositionen)
+            {
+                var r = (z_g / 2.0) * 0.8;
+                double m = 0.05;
+                double wx = (wi + m) * z_g;
+                double wy = (wj + m) * z_g;
+
+                double wh = (3 - 2 * m) * z_g;
+                double wb = (3 - 2 * m) * z_g;
+                html_template += $@"<rect class='würfel-vg'  x='{wx}' y='{wy}' width='{wh}' height='{wb}' rx='{r }'/>";
+            }
+
+            //punkte
+            var zahlen = zählAugen(subset, H, B);
+            for (var x = 0; x < B; x++)
+            {
+                for (var y = 0; y < H; y++)
+                {
+                    var idx = x + B * y;
+                    var v = zahlen[idx];
+
+                    var cx = x * z_g + z_g / 2.0;
+                    var cy = y * z_g + z_g / 2.0;
+                    var r = (z_g / 2.0) * 0.8;
+
+                    if (v > 0)
+                    {
+                        html_template += $@"<circle cx='{cx}' cy='{cy}' r='{r}' class='auge' />";
+                        html_template += $@"<text x='{cx}' y='{cy}' r='{r}' class='zahltext' style='font-size:{r * 1.5};'>{v}</text>";
+
+                    }
+                    else if (perturbs.Any(ar => ar[idx] == 5))
+                    {
+                        if (x > 0)
+                        {
+                            var ti = idx - 1;
+                            if (perturbs.Any(ar => ar[ti] == -1 - 2))
+                            {
+                                var x1 = -r * 0.8 - r * 0.1;
+                                var y1 = -r * 0.4;
+
+                                var x2 = -z_g / 2.0 - r * 0.1;
+                                var y2 = 0;
+
+                                var x3 = -r * 0.8 - r * 0.1;
+                                var y3 = +r * 0.4;
+                                html_template += $@" 
+                                                <g transform='translate({cx} {cy})'>
+                                                <line x1 = '{0}' y1 = '{0}' x2 = '{x2}' y2 = '{y2}' class='bewegungpfeil' />
+                                                <line x1 = '{x1}' y1 = '{y1}' x2 = '{x2}' y2 = '{y2}' class='bewegungpfeil' />
+                                                <line x1 = '{x2}' y1 = '{y2}' x2 = '{x3}' y2 = '{y3}' class='bewegungpfeil' />
+                                                </g>";
+                            }
+                        }
+
+                        if (x < B - 1)
+                        {
+                            var ti = idx + 1;
+                            if (perturbs.Any(ar => ar[ti] == -1 - 3))
+                            {
+                                var x1 = -r * 0.8 - r * 0.1;
+                                var y1 = -r * 0.4;
+
+                                var x2 = -z_g / 2.0 - r * 0.1;
+                                var y2 = 0;
+
+                                var x3 = -r * 0.8 - r * 0.1;
+                                var y3 = +r * 0.4;
+                                html_template += $@" 
+                                                <g transform='translate({cx} {cy}) rotate(180) '>
+                                                <line x1 = '{0}' y1 = '{0}' x2 = '{x2}' y2 = '{y2}' class='bewegungpfeil' />
+                                                <line x1 = '{x1}' y1 = '{y1}' x2 = '{x2}' y2 = '{y2}' class='bewegungpfeil' />
+                                                <line x1 = '{x2}' y1 = '{y2}' x2 = '{x3}' y2 = '{y3}' class='bewegungpfeil' />
+                                                </g>";
+                            }
+                        }
+
+                        if (y > 0)
+                        {
+                            var ti = idx - B;
+                            if (perturbs.Any(ar => ar[ti] == -1 - 0))
+                            {
+                                var x1 = -r * 0.8 - r * 0.1;
+                                var y1 = -r * 0.4;
+
+                                var x2 = -z_g / 2.0 - r * 0.1;
+                                var y2 = 0;
+
+                                var x3 = -r * 0.8 - r * 0.1;
+                                var y3 = +r * 0.4;
+                                html_template += $@" 
+                                                <g transform='translate({cx} {cy}) rotate(90) '>
+                                                <line x1 = '{0}' y1 = '{0}' x2 = '{x2}' y2 = '{y2}' class='bewegungpfeil' />
+                                                <line x1 = '{x1}' y1 = '{y1}' x2 = '{x2}' y2 = '{y2}' class='bewegungpfeil' />
+                                                <line x1 = '{x2}' y1 = '{y2}' x2 = '{x3}' y2 = '{y3}' class='bewegungpfeil' />
+                                                </g>";
+                            }
+                        }
+
+                        if (y < H - 1)
+                        {
+                            var ti = idx + B;
+                            if (perturbs.Any(ar => ar[ti] == -1 - 1))
+                            {
+                                var x1 = -r * 0.8 - r * 0.1;
+                                var y1 = -r * 0.4;
+
+                                var x2 = -z_g / 2.0 - r * 0.1;
+                                var y2 = 0;
+
+                                var x3 = -r * 0.8 - r * 0.1;
+                                var y3 = +r * 0.4;
+                                html_template += $@" 
+                                                <g transform='translate({cx} {cy}) rotate(270) '>
+                                                <line x1 = '{0}' y1 = '{0}' x2 = '{x2}' y2 = '{y2}' class='bewegungpfeil' />
+                                                <line x1 = '{x1}' y1 = '{y1}' x2 = '{x2}' y2 = '{y2}' class='bewegungpfeil' />
+                                                <line x1 = '{x2}' y1 = '{y2}' x2 = '{x3}' y2 = '{y3}' class='bewegungpfeil' />
+                                                </g>";
+                            }
+                        }
+
+
+                        //html_template += $@"<circle cx='{cx}' cy='{cy}' r='{r / 8}' class='bewegungpunkt' />";
+
+
+                    }
+                }
+            }
+            html_template += $@"</svg>";
+
+
+
+        }
+
+        html_template += "</ul>";
+
+        html_template += $@"
+</body>
+</html>
+            ";
+
+        var datei_name = $"../../../../output/{AUGE_ZAHL}_{B}x{H}.html";
+        File.WriteAllText(datei_name, html_template);
+        if (doopen)
+        {
+            System.Diagnostics.Process.Start(datei_name);
+        }
+    }
+
+    public static void Main()
+    {
+        System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+
+        //DoGenerate(3, 3, 16,true);
+
+        for (int augen = 4; augen < 16; augen++)
+        {
+            for (int b = 3; b <= augen+2; b++)
+            {
+                for (int h = b; h <= augen + 2; h++)
+                {
+                    DoGenerate(h, b, augen, false);
+                }
+            }
         }
     }
 }

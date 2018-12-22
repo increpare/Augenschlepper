@@ -1,9 +1,23 @@
 ﻿<Properties StartupConfiguration="{C294B435-3ABF-4E83-8F43-3943EFA82AA0}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="compute/Program.cs">
     <Files>
-      <File FileName="compute/Program.cs" Line="227" Column="1" />
+      <File FileName="compute/Program.cs" Line="751" Column="114" />
       <File FileName="Quelle nicht gefunden" />
+      <File FileName="compute/Properties/AssemblyInfo.cs" Line="1" Column="1" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="compute" expanded="True">
+            <Node name="compute" expanded="True">
+              <Node name="References" expanded="True" />
+              <Node name="Properties" expanded="True" />
+              <Node name="Program.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.compute PreferredExecutionTarget="MonoDevelop.Default" />
