@@ -452,7 +452,7 @@ static class MainClass
                         if (orig[i - 1 + B * j]==0 && orig[i - 2 + B * j] == 0)
                         {
                             var prestate = (int[])orig.Clone();
-                            prestate[i - 1 + B * j] = 5;
+                            prestate[i - 1 + B * j] = 5+3;
                             prestate[i + B * j] = -1-3;
                             result.Add(prestate);
                         }
@@ -464,7 +464,7 @@ static class MainClass
                         {
                             //push left
                             var prestate = (int[])orig.Clone();
-                            prestate[i + 1 + B * j] = 5;
+                            prestate[i + 1 + B * j] = 5+2;
                             prestate[i + B * j] = -1 - 2;
                             result.Add(prestate);
                         }
@@ -477,7 +477,7 @@ static class MainClass
                         {
                             //push up
                             var prestate = (int[])orig.Clone();
-                            prestate[i + B * (j - 1)] = 5;
+                            prestate[i + B * (j - 1)] = 5+1;
                             prestate[i + B * (j)] = -1 - 1;
                             result.Add(prestate);
 
@@ -490,7 +490,7 @@ static class MainClass
                         {
                             //push up
                             var prestate = (int[])orig.Clone();
-                            prestate[i + B * (j + 1)] = 5;
+                            prestate[i + B * (j + 1)] = 5+0;
                             prestate[i + B * (j)] = -1 - 0;
                             result.Add(prestate);
 
@@ -790,9 +790,13 @@ static class MainClass
         }
     }
 
-    static void DoGenerate(int H, int B, int AUGE_ZAHL, bool doopen)
+    static void DoGenerate(int H, int B, int AUGE_ZAHL, bool doopen, bool overwrite)
     {
-
+        var datei_name = $"../../../../output/{AUGE_ZAHL}_{B}x{H}_softborder.html";
+        if (File.Exists(datei_name)&&overwrite==false)
+        {
+            return;
+        }
 
         var init = new int[H * B];
         //var subsets = new List<int[]>();
@@ -818,8 +822,12 @@ static class MainClass
                         .Select(o => scoreausrechnen(o, H, B))
                         .OrderBy(n => n).Distinct().ToArray();
 
-        subsets = subsets.OrderBy(o => scoreausrechnen(o, H, B)).ToArray();
+        subsets = subsets.OrderByDescending(o => scoreausrechnen(o, H, B)).ToArray();
 
+        if (scoreset.Length < 1)
+        {
+            return;
+        }
         var ss0 = scoreset.Length < 1 ? -1 : scoreset[0];
         var ss1 = scoreset.Length < 2 ? -1 : scoreset[1];
         var ssnm1 = scoreset.Length < 2 ? -1 : scoreset[scoreset.Length - 2];
@@ -987,12 +995,12 @@ li{{
                         html_template += $@"<text x='{cx}' y='{cy}' r='{r}' class='zahltext' style='font-size:{r * 1.5};'>{v}</text>";
 
                     }
-                    else if (perturbs.Any(ar => ar[idx] == 5))
+                    else if (perturbs.Any(ar => ar[idx] >= 5))
                     {
                         if (x > 0)
                         {
                             var ti = idx - 1;
-                            if (perturbs.Any(ar => ar[ti] == -1 - 2))
+                            if (perturbs.Any(ar => ar[idx] == 5 + 2))
                             {
                                 var x1 = -r * 0.8 - r * 0.1;
                                 var y1 = -r * 0.4;
@@ -1014,7 +1022,7 @@ li{{
                         if (x < B - 1)
                         {
                             var ti = idx + 1;
-                            if (perturbs.Any(ar => ar[ti] == -1 - 3))
+                            if (perturbs.Any(ar => ar[idx] == 5 + 3))
                             {
                                 var x1 = -r * 0.8 - r * 0.1;
                                 var y1 = -r * 0.4;
@@ -1036,7 +1044,7 @@ li{{
                         if (y > 0)
                         {
                             var ti = idx - B;
-                            if (perturbs.Any(ar => ar[ti] == -1 - 0))
+                            if (perturbs.Any(ar => ar[idx] == 5 + 0))
                             {
                                 var x1 = -r * 0.8 - r * 0.1;
                                 var y1 = -r * 0.4;
@@ -1058,7 +1066,7 @@ li{{
                         if (y < H - 1)
                         {
                             var ti = idx + B;
-                            if (perturbs.Any(ar => ar[ti] == -1 - 1))
+                            if (perturbs.Any(ar => ar[idx] == 5 + 1))
                             {
                                 var x1 = -r * 0.8 - r * 0.1;
                                 var y1 = -r * 0.4;
@@ -1097,7 +1105,6 @@ li{{
 </html>
             ";
 
-        var datei_name = $"../../../../output/{AUGE_ZAHL}_{B}x{H}.html";
         File.WriteAllText(datei_name, html_template);
         if (doopen)
         {
@@ -1109,17 +1116,21 @@ li{{
     {
         System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
-        //DoGenerate(3, 3, 16,true);
+        DoGenerate(4, 4, 4,true, true);
 
-        for (int augen = 4; augen < 16; augen++)
-        {
-            for (int b = 3; b <= augen+2; b++)
-            {
-                for (int h = b; h <= augen + 2; h++)
-                {
-                    DoGenerate(h, b, augen, false);
-                }
-            }
-        }
+        //for (int augen = 3; augen < 16; augen++)
+        //{
+        //    for (int h = 3; h <= augen+2; h++)
+        //    {
+        //        for (int b = h; b <= augen + 2; b++)
+        //        {
+        //            if (h > 7 || b > 8)
+        //            {
+        //                continue;
+        //            }
+        //            DoGenerate(h, b, augen, false,true);
+        //        }
+        //    }
+        //}
     }
 }
