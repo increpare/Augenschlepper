@@ -91,6 +91,46 @@
 			stroke:none;
 		}
   		
+		.seite-modal {
+			fill:var(--bg);
+			stroke:none;
+		}
+  		
+		.seite-modal-innen {
+			fill:none;
+			stroke:black;
+			stroke-width:0.2;
+		}
+  		
+
+		.seite-modal-spielstand {
+		     font-size:8px;
+		     font-family:embeddedfont, Amatic SC;
+	    	dominant-baseline: hanging;
+			text-anchor: left;
+			stroke:none;
+	    	text-anchor: middle;
+		}
+		.seite-modal-titel {
+		     font-size:8px;
+		     font-family:embeddedfontbold, Amatic SC;
+	    	dominant-baseline: hanging;
+			text-anchor: left;
+			stroke:none;
+	    	text-anchor: middle;
+		}
+  		
+
+		.seite-modal-text {
+		     font-size:6px;
+		     font-family:embeddedfont, Amatic SC;
+	    	dominant-baseline: hanging;
+			text-anchor: left;
+			stroke:none;
+	    	text-anchor: middle;
+		}
+  		
+
 		.seite-schatten {
 			fill:var(--seite-schatten);
 			stroke:none;
@@ -283,7 +323,6 @@ let editmodus=true;
 let movedur=0.1;
 let fadeindur=0.2;
 
-let level=0;
 
 let spielstand=[0,0];
 let entitäten=[];
@@ -292,99 +331,142 @@ let würfeln=[];
 let level_b=-1;
 let level_h=-1;
 
+let levelnamen = [
+	["Los gehts!","Let's go!"],
+	["Augenzählen","Counting dots"],
+	["Doch.","Yes it is possible"],
+	["Des Verlierers Bedarf","Losers also have needs"],
+	["Zu verlieren kein Chance","This is yours to lose"],
+	["Eng.","A bit cramped, innit."],
+	["Versperrt","Obstructions"],
+	["Breit genug","Time and space enough"],
+	["Zentraler Grenzwertsatz","Central limit theorem"],
+	["Seltsame Knöpfe","Curious buttons"],
+	["Spannend","A stretch"]
+]
+
 let levels = [
 
-//ok anfangspunkt?
+//0
+// {"entitäten":[["s",11,4,11,4,"s"],["o",7,4,7,4,"o"],["o",6,4,6,4,"o"],["1",0,0,0,0,"1"],["1",0,2,0,2,"1"],["1",2,2,2,2,"1"],["1",2,0,2,0,"1"],["1",15,6,15,6,"1"],["1",17,8,17,8,"1"],["1",0,8,0,8,"1"],["1",17,2,17,2,"1"],["1",15,0,15,0,"1"],["1",16,4,16,4,"1"],["1",0,6,0,6,"1"],["1",2,8,2,8,"1"],["1",1,0,1,0,"1"],["1",1,2,1,2,"1"],["1",15,3,15,3,"1"],["1",15,5,15,5,"1"],["1",17,5,17,5,"1"],["1",17,3,17,3,"1"],["1",2,6,2,6,"1"],["1",16,1,16,1,"1"],["1",1,4,1,4,"1"]],"würfeln":[[0,0,1],[0,6,1],[15,0,1],[15,3,1],[15,6,1],[0,3,1]],"spielstand":[11,10],"level_b":18,"level_h":9},
+// {"entitäten":[["s",11,3,11,3,"s"],["o",7,3,7,3,"o"],["o",6,3,6,3,"o"],["1",15,0,15,0,"1"],["1",16,1,16,1,"1"],["1",17,2,17,2,"1"],["1",15,6,15,6,"1"],["1",17,4,17,4,"1"],["1",15,4,15,4,"1"],["1",17,6,17,6,"1"],["1",1,1,1,1,"1"],["1",0,4,0,4,"1"],["1",2,6,2,6,"1"],["1",2,2,2,2,"1"],["1",0,0,0,0,"1"],["1",0,2,0,2,"1"],["1",2,0,2,0,"1"]],"würfeln":[[0,0,1],[0,4,1],[15,0,1],[15,4,1]],"spielstand":[7,7],"level_b":18,"level_h":7},
+//{"entitäten":[["s",7,3,7,3,"s"],["o",3,3,3,3,"o"],["o",2,3,2,3,"o"]],"würfeln":[],"spielstand":[0,0],"level_b":10,"level_h":7},
+{"entitäten":[["s",7,2,7,2,"s"],["o",3,2,3,2,"o"],["o",2,2,2,2,"o"]],"würfeln":[],"spielstand":[0,0],"level_b":10,"level_h":5},
 
-//nicht so schwierig, ziemlich angenehm?
-{"entitäten":[["s",2,1,2,1,"s"],["1",5,0,5,0,"1"],["1",5,4,5,4,"1"],["1",9,0,9,0,"1"],["1",6,1,6,1,"1"],["3",7,2,7,2,"3"],["o",4,1,4,1,"o"],["o",4,3,4,3,"o"],["o",0,1,0,1,"o"],["o",0,3,0,3,"o"],["o",1,2,1,2,"o"],["o",3,2,3,2,"o"]],"würfeln":[[5,0,1],[5,2,1],[7,0,1]],"spielstand":[0,7],"level_b":10,"level_h":5},
-
-//nicht schwierig, aber nicht besonders interessant?
-{"entitäten":[["o",3,3,3,3,"o"],["s",7,3,7,3,"s"],["o",3,2,3,2,"o"],["1",2,2,2,2,"1"],["1",2,3,2,3,"1"],["1",0,0,0,0,"1"],["1",0,5,0,5,"1"],["o",5,1,5,1,"o"],["o",8,2,8,2,"o"],["o",8,3,8,3,"o"],["o",5,4,5,4,"o"],["o",6,4,6,4,"o"],["o",6,1,6,1,"o"]],"würfeln":[[0,0,1],[0,3,1]],"spielstand":[4,0],"level_b":10,"level_h":6},
-
-//open, easy-going level?
-{"entitäten":[["s",13,3,13,3,"s"],["o",6,7,6,7,"o"],["1",8,0,8,0,"1"],["1",6,2,6,2,"1"],["1",6,5,6,5,"1"],["1",8,3,8,3,"1"],["1",4,1,4,1,"1"],["1",2,4,2,4,"1"],["1",3,2,3,2,"1"],["1",5,0,5,0,"1"],["1",15,0,15,0,"1"],["1",12,3,12,3,"1"],["1",11,4,11,4,"1"],["2",13,2,13,2,"2"]],"würfeln":[[6,0,1],[6,3,1],[3,0,1],[1,3,1],[11,2,1],[13,0,1]],"spielstand":[6,7],"level_b":16,"level_h":6},
-
-//spaß-machend weil es so eng ist?
-{"entitäten":[["s",3,2,3,2,"s"],["o",2,1,2,1,"o"],["o",2,3,2,3,"o"],["1",4,0,4,0,"1"],["1",4,4,4,4,"1"],["3",6,2,6,2,"3"],["o",1,1,1,1,"o"],["o",1,3,1,3,"o"]],"würfeln":[[4,0,1],[4,2,1],[5,1,1]],"spielstand":[0,5],"level_b":8,"level_h":5},
-
-//nicht-trivial. weiß aber nicht obw es interessant zu lösen ist
-{"entitäten":[["s",7,3,7,3,"s"],["o",8,1,8,1,"o"],["o",6,4,6,4,"o"],["o",6,1,6,1,"o"],["o",5,1,5,1,"o"],["o",5,4,5,4,"o"],["o",8,4,8,4,"o"],["o",9,4,9,4,"o"],["o",9,1,9,1,"o"],["1",4,0,4,0,"1"],["1",3,1,3,1,"1"],["1",2,2,2,2,"1"],["1",4,2,4,2,"1"],["1",2,0,2,0,"1"],["1",2,3,2,3,"1"],["1",3,4,3,4,"1"],["1",4,5,4,5,"1"],["1",4,3,4,3,"1"],["1",2,5,2,5,"1"]],"würfeln":[[2,0,1],[2,3,1]],"spielstand":[10,0],"level_b":10,"level_h":6},
-
-//höchermittleschwierigkeit
-{"entitäten":[["s",3,3,3,3,"s"],["o",0,1,0,1,"o"],["o",0,3,0,3,"o"],["o",2,2,2,2,"o"],["o",1,2,1,2,"o"],["1",7,1,7,1,"1"],["1",8,2,8,2,"1"],["1",9,3,9,3,"1"],["1",9,1,9,1,"1"],["1",7,3,7,3,"1"]],"würfeln":[[7,1,1]],"spielstand":[0,5],"level_b":10,"level_h":5},
-
-//mittleschwierigkeit
-{"entitäten":[["o",0,2,0,2,"o"],["o",3,4,3,4,"o"],["o",3,0,3,0,"o"],["o",6,2,6,2,"o"],["s",3,2,3,2,"s"],["o",7,2,7,2,"o"],["1",15,3,15,3,"1"],["1",15,1,15,1,"1"],["2",13,3,13,3,"2"],["2",13,1,13,1,"2"]],"würfeln":[[12,0,1],[12,2,1],[13,1,1]],"spielstand":[0,6],"level_b":16,"level_h":5},
-
-//4 in einer Reihe - ein Red Herring?
-{"entitäten":[["s",8,4,8,4,"s"],["o",7,3,7,3,"o"],["o",7,2,7,2,"o"],["o",9,2,9,2,"o"],["o",9,3,9,3,"o"],["3",2,3,2,3,"3"],["1",0,1,0,1,"1"],["1",0,5,0,5,"1"]],"würfeln":[[0,1,1],[0,3,1],[1,2,1]],"spielstand":[5,0],"level_b":12,"level_h":7},
-
+//1
 //OK ANFANGSPUNKT?
 {"entitäten":[["s",9,2,9,2,"s"],["1",5,0,5,0,"1"],["1",7,2,7,2,"1"],["1",7,4,7,4,"1"],["1",5,6,5,6,"1"],["o",5,3,5,3,"o"],["o",7,3,7,3,"o"],["o",8,3,8,3,"o"]],"würfeln":[[5,0,1],[5,4,1]],"spielstand":[0,4],"level_b":10,"level_h":7},
 
-
-//Level 3?
-//this level is yours for the taking
-{"entitäten":[["s",15,7,15,7,"s"],["o",13,3,13,3,"o"],["o",16,3,16,3,"o"],["o",16,6,16,6,"o"],["o",15,5,15,5,"o"],["o",15,4,15,4,"o"],["o",14,4,14,4,"o"],["o",14,5,14,5,"o"],["o",13,6,13,6,"o"],["o",14,7,14,7,"o"]],"würfeln":[],"spielstand":[0,0],"level_b":20,"level_h":10},
-
-//oder diese variation? (viel schwieriger?)
-{"entitäten":[["s",15,6,15,6,"s"],["o",13,3,13,3,"o"],["o",15,5,15,5,"o"],["o",15,4,15,4,"o"],["o",13,6,13,6,"o"],["o",13,4,13,4,"o"],["o",13,5,13,5,"o"],["o",14,6,14,6,"o"],["o",14,3,14,3,"o"],["o",15,3,15,3,"o"]],"würfeln":[],"spielstand":[0,0],"level_b":20,"level_h":10},
-
+//2
 //könnte ein gutes Level 2 sein
 //einfaches level, was eine Combo braucht, ohne an die externale geometrie zu merken
 //was ist die höchst mögliche Punktzahl ?
 {"entitäten":[["s",8,5,8,5,"s"],["o",7,2,7,2,"o"],["o",7,3,7,3,"o"],["1",3,1,3,1,"1"],["1",3,4,3,4,"1"],["1",3,7,3,7,"1"],["o",7,4,7,4,"o"]],"würfeln":[[2,0,1],[2,3,1],[2,6,1]],"spielstand":[3,0],"level_b":10,"level_h":9},
 
-
-//ziemlich einfach, aber fordert eine Combo, man muss auf die geometrie passen
-{"entitäten":[["s",6,1,6,1,"s"],["1",1,1,1,1,"1"],["o",7,2,7,2,"o"],["o",7,3,7,3,"o"],["1",4,4,4,4,"1"]],"würfeln":[[0,0,1],[3,3,1]],"spielstand":[2,0],"level_b":10,"level_h":6},
-
-//rumprobieren
-
+//3
 //könnte level 2sein?
 {"entitäten":[["o",4,1,4,1,1],["o",0,4,0,4,1],["o",0,0,0,0],["o",3,2,3,2],["o",4,3,4,3],["o",5,1,5,1],["o",5,3,5,3],["s",3,3,3,3]],"würfeln":[],"spielstand":[0,0],"level_b":6,"level_h":5},
 
-{"entitäten":[["s",7,0,7,0],["o",0,0,0,0],["o",0,4,0,4],["o",5,2,5,2,1],["o",4,2,4,2],["o",6,2,6,2],["o",5,1,5,1],["o",5,3,5,3]],"würfeln":[],"spielstand":[0,0],"level_b":8,"level_h":5},
+//4
+//Level 3?
+//this level is yours for the taking
+{"entitäten":[["s",15,7,15,7,"s"],["o",13,3,13,3,"o"],["o",16,3,16,3,"o"],["o",16,6,16,6,"o"],["o",15,5,15,5,"o"],["o",15,4,15,4,"o"],["o",14,4,14,4,"o"],["o",14,5,14,5,"o"],["o",13,6,13,6,"o"],["o",14,7,14,7,"o"]],"würfeln":[],"spielstand":[0,0],"level_b":20,"level_h":10},
 
-{"entitäten":[["s",6,3,6,3],["o",5,1,5,1,1],["o",6,1,6,1],["o",5,2,5,2],["o",0,0,0,0],["o",0,4,0,4]],"würfeln":[],"spielstand":[0,0],"level_b":8,"level_h":5},
-
-{"entitäten":[["s",9,2,9,2],["o",0,0,0,0],["o",4,0,4,0],["o",0,4,0,4],["o",4,4,4,4],["o",1,1,1,1],["o",1,3,1,3],["o",3,2,3,2,1],["o",4,2,4,2],["o",3,4,3,4],["o",3,0,3,0]],"würfeln":[],"spielstand":[0,0],"level_b":12,"level_h":5},
-
-{"entitäten":[["s",9,2,9,2],["o",0,0,0,0],["o",2,0,2,0],["o",4,0,4,0],["o",0,4,0,4],["o",2,4,2,4],["o",4,4,4,4],["o",1,1,1,1],["o",1,3,1,3],["o",3,2,3,2,1],["o",4,2,4,2],["o",3,0,3,0],["o",3,4,3,4]],"würfeln":[],"spielstand":[0,0],"level_b":12,"level_h":5},
-
-{"entitäten":[["s",9,2,9,2],["o",0,0,0,0],["o",2,0,2,0],["o",4,0,4,0],["o",0,4,0,4],["o",2,4,2,4],["o",4,4,4,4],["o",1,1,1,1],["o",1,3,1,3],["o",3,2,3,2,1],["o",4,2,4,2]],"würfeln":[],"spielstand":[0,0],"level_b":12,"level_h":5},
-
-//testing
-{"entitäten":[["s",10,2,10,2],["1",0,6,0,6,1],["1",0,0,0,0,1],["1",2,2,2,2,1],["1",1,1,1,1,1],["1",2,4,2,4,1],["o",7,3,7,3,1],["o",8,3,8,3],["o",8,2,8,2],["o",8,4,8,4],["o",9,3,9,3]],"würfeln":[[0,0,1],[0,4,1]],"spielstand":[5,0],"level_b":12,"level_h":7},
+//5
+//nicht so schwierig, ziemlich angenehm?
+{"entitäten":[["s",2,1,2,1,"s"],["1",5,0,5,0,"1"],["1",5,4,5,4,"1"],["1",9,0,9,0,"1"],["1",6,1,6,1,"1"],["3",7,2,7,2,"3"],["o",4,1,4,1,"o"],["o",4,3,4,3,"o"],["o",0,1,0,1,"o"],["o",0,3,0,3,"o"],["o",1,2,1,2,"o"],["o",3,2,3,2,"o"]],"würfeln":[[5,0,1],[5,2,1],[7,0,1]],"spielstand":[0,7],"level_b":10,"level_h":5},
 
 
-//okay, weiß nicht ob es schweirig ist oder nicht 
-//uff,schräge lösung ist dumm
-{"entitäten":[["s",6,3,6,3],["o",5,1,5,1,1],["o",6,1,6,1],["o",5,2,5,2],["o",0,0,0,0],["o",0,4,0,4],["o",3,2,3,2,1],["o",4,1,4,1]],"würfeln":[],"spielstand":[0,0],"level_b":8,"level_h":5},
-
-//okay, hard
-{"entitäten":[["s",10,2,10,2],["1",0,6,0,6,1],["1",0,0,0,0,1],["1",2,2,2,2,1],["1",1,1,1,1,1],["1",2,4,2,4,1],["o",7,3,7,3,1],["o",8,3,8,3],["o",8,2,8,2],["o",8,4,8,4],["o",9,3,9,3],["1",0,4,0,4,1],["1",2,6,2,6,1],["1",1,5,1,5,1]],"würfeln":[[0,0,1],[0,4,1]],"spielstand":[8,0],"level_b":12,"level_h":7},
-
-//okay middle-difficult level
-{"entitäten":[["s",7,3,7,3],["1",0,6,0,6,1],["1",0,0,0,0,1],["1",2,2,2,2,1],["o",8,2,8,2],["o",8,3,8,3],["o",8,4,8,4],["o",9,3,9,3],["1",1,1,1,1,1],["1",2,4,2,4,1]],"würfeln":[[0,0,1],[0,4,1]],"spielstand":[5,0],"level_b":12,"level_h":7},	
-
-//level 2
-//schwieriger 
-
-{"entitäten":[["s",7,4,7,4],["1",1,5,1,5,1],["1",2,4,2,4,1],["1",0,6,0,6,1],["1",0,0,0,0,1],["o",5,5,5,5],["o",6,5,6,5],["1",11,4,11,4,1],["1",9,2,9,2,1],["1",6,0,6,0,1],["1",7,1,7,1,1],["1",8,2,8,2,1],["o",5,4,5,4],["1",2,2,2,2,1],["1",3,3,3,3,1],["1",5,1,5,1,1]],"würfeln":[[0,4,1],[6,0,1],[9,2,1],[0,0,1],[3,1,1]],"spielstand":[7,5],"level_b":12,"level_h":7},
-
-{"entitäten":[["s",7,2,7,2],["1",1,5,1,5,1],["1",2,4,2,4,1],["1",0,6,0,6,1],["1",3,2,3,2,1],["1",5,0,5,0,1],["1",2,2,2,2,1],["1",0,0,0,0,1],["o",5,5,5,5],["o",6,5,6,5],["o",6,4,6,4],["1",11,4,11,4,1],["1",10,3,10,3,1],["1",9,2,9,2,1],["1",9,4,9,4,1],["1",11,2,11,2,1]],"würfeln":[[0,0,1],[0,4,1],[3,0,1],[9,2,1]],"spielstand":[7,5],"level_b":12,"level_h":7},
-
-//level 1
-//funktioniert wesentlich ok
-{"entitäten":[["s",7,2,7,2],["1",2,6,2,6,1],["1",0,4,0,4,1],["1",1,5,1,5,1],["1",5,0,5,0,1],["1",4,1,4,1,1],["1",3,2,3,2,1],["1",3,0,3,0,1],["1",5,2,5,2,1],["1",9,5,9,5,1],["1",10,4,10,4,1],["1",11,3,11,3,1],["1",9,3,9,3,1],["1",11,5,11,5,1],["o",6,5,6,5,1],["o",5,5,5,5],["o",5,4,5,4]],"würfeln":[[0,4,1],[3,0,1],[9,3,1]],"spielstand":[8,5],"level_b":12,"level_h":7},
+//6
+//ziemlich einfach, aber fordert eine Combo, man muss auf die geometrie passen
+{"entitäten":[["s",6,1,6,1,"s"],["1",1,1,1,1,"1"],["o",7,2,7,2,"o"],["o",7,3,7,3,"o"],["1",4,4,4,4,"1"]],"würfeln":[[0,0,1],[3,3,1]],"spielstand":[2,0],"level_b":10,"level_h":6},
 
 
-{"entitäten":[["s",7,2,7,2],["o",5,3,5,3,1],["o",6,4,6,4],["1",1,2,1,2,1],["1",2,1,2,1,1],["1",3,2,3,2,1],["1",3,0,3,0,1],["1",1,0,1,0,1],["1",9,6,9,6,1],["1",10,5,10,5,1],["1",11,4,11,4,1],["o",5,4,5,4,1],["1",2,6,2,6,1],["1",0,4,0,4,1],["1",9,4,9,4,1],["1",11,6,11,6,1],["1",1,5,1,5,1]],"würfeln":[[0,4,1],[1,0,1],[9,4,1]],"spielstand":[8,5],"level_b":12,"level_h":7},
-{"entitäten":[["s",7,2,7,2],["o",5,3,5,3,1],["o",6,4,6,4],["1",1,2,1,2,1],["1",2,1,2,1,1],["1",3,2,3,2,1],["1",3,0,3,0,1],["1",1,0,1,0,1],["1",9,6,9,6,1],["1",10,5,10,5,1],["1",11,4,11,4,1],["o",5,4,5,4,1],["1",2,6,2,6,1],["1",0,4,0,4,1],["1",9,4,9,4,1],["1",11,6,11,6,1]],"würfeln":[[0,4,1],[1,0,1],[9,4,1]],"spielstand":[7,5],"level_b":12,"level_h":7},
-{"entitäten":[["s",7,2,7,2],["o",5,3,5,3,1],["o",6,4,6,4],["1",1,2,1,2,1],["1",2,1,2,1,1],["1",3,2,3,2,1],["1",3,0,3,0,1],["1",1,0,1,0,1],["1",11,2,11,2,1],["1",9,0,9,0,1],["1",9,6,9,6,1],["1",10,5,10,5,1],["1",11,4,11,4,1],["o",5,4,5,4,1],["1",2,6,2,6,1],["1",0,4,0,4,1]],"würfeln":[[1,0,1],[9,0,1],[9,4,1],[0,4,1]],"spielstand":[7,5],"level_b":12,"level_h":7},
-{"entitäten":[["s",6,1,6,1],["o",3,2,3,2],["o",4,3,4,3],["o",3,3,3,3]],"würfeln":[],"spielstand":[0,0],"level_b":8,"level_h":5},
+//7
+//spaß-machend weil es so eng ist?
+{"entitäten":[["s",3,2,3,2,"s"],["o",2,1,2,1,"o"],["o",2,3,2,3,"o"],["1",4,0,4,0,"1"],["1",4,4,4,4,"1"],["3",6,2,6,2,"3"],["o",1,1,1,1,"o"],["o",1,3,1,3,"o"]],"würfeln":[[4,0,1],[4,2,1],[5,1,1]],"spielstand":[0,5],"level_b":8,"level_h":5},
+
+
+//8
+//nicht-trivial. weiß aber nicht obw es interessant zu lösen ist
+{"entitäten":[["s",7,3,7,3,"s"],["o",8,1,8,1,"o"],["o",6,4,6,4,"o"],["o",6,1,6,1,"o"],["o",5,1,5,1,"o"],["o",5,4,5,4,"o"],["o",8,4,8,4,"o"],["o",9,4,9,4,"o"],["o",9,1,9,1,"o"],["1",4,0,4,0,"1"],["1",3,1,3,1,"1"],["1",2,2,2,2,"1"],["1",4,2,4,2,"1"],["1",2,0,2,0,"1"],["1",2,3,2,3,"1"],["1",3,4,3,4,"1"],["1",4,5,4,5,"1"],["1",4,3,4,3,"1"],["1",2,5,2,5,"1"]],"würfeln":[[2,0,1],[2,3,1]],"spielstand":[10,0],"level_b":10,"level_h":6},
+
+//9
+//höchermittleschwierigkeit
+{"entitäten":[["s",3,3,3,3,"s"],["o",0,1,0,1,"o"],["o",0,3,0,3,"o"],["o",2,2,2,2,"o"],["o",1,2,1,2,"o"],["1",7,1,7,1,"1"],["1",8,2,8,2,"1"],["1",9,3,9,3,"1"],["1",9,1,9,1,"1"],["1",7,3,7,3,"1"]],"würfeln":[[7,1,1]],"spielstand":[0,5],"level_b":10,"level_h":5},
+
+//10
+//4 in einer Reihe - ein Red Herring?
+//schlechtes level
+{"entitäten":[["s",8,4,8,4,"s"],["o",7,3,7,3,"o"],["o",7,2,7,2,"o"],["o",9,2,9,2,"o"],["o",9,3,9,3,"o"],["3",2,3,2,3,"3"],["1",0,1,0,1,"1"],["1",0,5,0,5,"1"]],"würfeln":[[0,1,1],[0,3,1],[1,2,1]],"spielstand":[5,0],"level_b":12,"level_h":7},
+
+
+///ende des levels
+
+
+// //ok anfangspunkt?
+
+// //nicht schwierig, aber nicht besonders interessant?
+// {"entitäten":[["o",3,3,3,3,"o"],["s",7,3,7,3,"s"],["o",3,2,3,2,"o"],["1",2,2,2,2,"1"],["1",2,3,2,3,"1"],["1",0,0,0,0,"1"],["1",0,5,0,5,"1"],["o",5,1,5,1,"o"],["o",8,2,8,2,"o"],["o",8,3,8,3,"o"],["o",5,4,5,4,"o"],["o",6,4,6,4,"o"],["o",6,1,6,1,"o"]],"würfeln":[[0,0,1],[0,3,1]],"spielstand":[4,0],"level_b":10,"level_h":6},
+
+
+
+
+// //mittleschwierigkeit (tatsächlich zu einfach?)
+// {"entitäten":[["o",0,2,0,2,"o"],["o",3,4,3,4,"o"],["o",3,0,3,0,"o"],["o",6,2,6,2,"o"],["s",3,2,3,2,"s"],["o",7,2,7,2,"o"],["1",15,3,15,3,"1"],["1",15,1,15,1,"1"],["2",13,3,13,3,"2"],["2",13,1,13,1,"2"]],"würfeln":[[12,0,1],[12,2,1],[13,1,1]],"spielstand":[0,6],"level_b":16,"level_h":5},
+
+
+
+// //oder diese variation? (viel schwieriger?)
+// {"entitäten":[["s",15,6,15,6,"s"],["o",13,3,13,3,"o"],["o",15,5,15,5,"o"],["o",15,4,15,4,"o"],["o",13,6,13,6,"o"],["o",13,4,13,4,"o"],["o",13,5,13,5,"o"],["o",14,6,14,6,"o"],["o",14,3,14,3,"o"],["o",15,3,15,3,"o"]],"würfeln":[],"spielstand":[0,0],"level_b":20,"level_h":10},
+
+// //rumprobieren
+
+// //(einfach aber es gibt vielen Raum zu bewegen?)
+// {"entitäten":[["s",7,0,7,0],["o",0,0,0,0],["o",0,4,0,4],["o",5,2,5,2,1],["o",4,2,4,2],["o",6,2,6,2],["o",5,1,5,1],["o",5,3,5,3]],"würfeln":[],"spielstand":[0,0],"level_b":8,"level_h":5},
+
+// {"entitäten":[["s",6,3,6,3],["o",5,1,5,1,1],["o",6,1,6,1],["o",5,2,5,2],["o",0,0,0,0],["o",0,4,0,4]],"würfeln":[],"spielstand":[0,0],"level_b":8,"level_h":5},
+
+// //zu eng
+// {"entitäten":[["s",9,2,9,2],["o",0,0,0,0],["o",4,0,4,0],["o",0,4,0,4],["o",4,4,4,4],["o",1,1,1,1],["o",1,3,1,3],["o",3,2,3,2,1],["o",4,2,4,2],["o",3,4,3,4],["o",3,0,3,0]],"würfeln":[],"spielstand":[0,0],"level_b":12,"level_h":5},
+
+// {"entitäten":[["s",9,2,9,2],["o",0,0,0,0],["o",2,0,2,0],["o",4,0,4,0],["o",0,4,0,4],["o",2,4,2,4],["o",4,4,4,4],["o",1,1,1,1],["o",1,3,1,3],["o",3,2,3,2,1],["o",4,2,4,2],["o",3,0,3,0],["o",3,4,3,4]],"würfeln":[],"spielstand":[0,0],"level_b":12,"level_h":5},
+
+// {"entitäten":[["s",9,2,9,2],["o",0,0,0,0],["o",2,0,2,0],["o",4,0,4,0],["o",0,4,0,4],["o",2,4,2,4],["o",4,4,4,4],["o",1,1,1,1],["o",1,3,1,3],["o",3,2,3,2,1],["o",4,2,4,2]],"würfeln":[],"spielstand":[0,0],"level_b":12,"level_h":5},
+
+
+// //(eeh,nicht so gut, aber nicht schlect?)
+// {"entitäten":[["s",10,2,10,2,"s"],["1",0,6,0,6,"1"],["1",0,0,0,0,"1"],["1",2,2,2,2,"1"],["1",1,1,1,1,"1"],["1",2,4,2,4,"1"],["o",7,3,7,3,"o"],["o",8,3,8,3,"o"],["o",8,2,8,2,"o"],["o",8,4,8,4,"o"],["o",9,3,9,3,"o"],["1",1,5,1,5,"1"],["1",3,4,3,4,"1"],["1",5,2,5,2,"1"]],"würfeln":[[0,0,1],[0,4,1],[3,2,1]],"spielstand":[8,0],"level_b":12,"level_h":7},
+
+
+
+
+// //okay, weiß nicht ob es schweirig ist oder nicht 
+// //uff,schräge lösung ist dumm
+// {"entitäten":[["s",6,3,6,3],["o",5,1,5,1,1],["o",6,1,6,1],["o",5,2,5,2],["o",0,0,0,0],["o",0,4,0,4],["o",3,2,3,2,1],["o",4,1,4,1]],"würfeln":[],"spielstand":[0,0],"level_b":8,"level_h":5},
+
+// //okay, hard (Tatsächlich nicht - schräg)
+// {"entitäten":[["s",10,2,10,2],["1",0,6,0,6,1],["1",0,0,0,0,1],["1",2,2,2,2,1],["1",1,1,1,1,1],["1",2,4,2,4,1],["o",7,3,7,3,1],["o",8,3,8,3],["o",8,2,8,2],["o",8,4,8,4],["o",9,3,9,3],["1",0,4,0,4,1],["1",2,6,2,6,1],["1",1,5,1,5,1]],"würfeln":[[0,0,1],[0,4,1]],"spielstand":[8,0],"level_b":12,"level_h":7},
+
+// //okay middle-difficult level (eh, nicht interessant)
+// {"entitäten":[["s",7,3,7,3],["1",0,6,0,6,1],["1",0,0,0,0,1],["1",2,2,2,2,1],["o",8,2,8,2],["o",8,3,8,3],["o",8,4,8,4],["o",9,3,9,3],["1",1,1,1,1,1],["1",2,4,2,4,1]],"würfeln":[[0,0,1],[0,4,1]],"spielstand":[5,0],"level_b":12,"level_h":7},	
+
+// //level 2
+// //schwieriger (tatsächlich total einfach?)
+// {"entitäten":[["s",7,4,7,4],["1",1,5,1,5,1],["1",2,4,2,4,1],["1",0,6,0,6,1],["1",0,0,0,0,1],["o",5,5,5,5],["o",6,5,6,5],["1",11,4,11,4,1],["1",9,2,9,2,1],["1",6,0,6,0,1],["1",7,1,7,1,1],["1",8,2,8,2,1],["o",5,4,5,4],["1",2,2,2,2,1],["1",3,3,3,3,1],["1",5,1,5,1,1]],"würfeln":[[0,4,1],[6,0,1],[9,2,1],[0,0,1],[3,1,1]],"spielstand":[7,5],"level_b":12,"level_h":7},
+// //(ditto)
+// {"entitäten":[["s",7,2,7,2],["1",1,5,1,5,1],["1",2,4,2,4,1],["1",0,6,0,6,1],["1",3,2,3,2,1],["1",5,0,5,0,1],["1",2,2,2,2,1],["1",0,0,0,0,1],["o",5,5,5,5],["o",6,5,6,5],["o",6,4,6,4],["1",11,4,11,4,1],["1",10,3,10,3,1],["1",9,2,9,2,1],["1",9,4,9,4,1],["1",11,2,11,2,1]],"würfeln":[[0,0,1],[0,4,1],[3,0,1],[9,2,1]],"spielstand":[7,5],"level_b":12,"level_h":7},
+
+// //level 1
+// //funktioniert wesentlich ok (nein - ditto)
+// {"entitäten":[["s",7,2,7,2],["1",2,6,2,6,1],["1",0,4,0,4,1],["1",1,5,1,5,1],["1",5,0,5,0,1],["1",4,1,4,1,1],["1",3,2,3,2,1],["1",3,0,3,0,1],["1",5,2,5,2,1],["1",9,5,9,5,1],["1",10,4,10,4,1],["1",11,3,11,3,1],["1",9,3,9,3,1],["1",11,5,11,5,1],["o",6,5,6,5,1],["o",5,5,5,5],["o",5,4,5,4]],"würfeln":[[0,4,1],[3,0,1],[9,3,1]],"spielstand":[8,5],"level_b":12,"level_h":7},
+
+
+// {"entitäten":[["s",7,2,7,2],["o",5,3,5,3,1],["o",6,4,6,4],["1",1,2,1,2,1],["1",2,1,2,1,1],["1",3,2,3,2,1],["1",3,0,3,0,1],["1",1,0,1,0,1],["1",9,6,9,6,1],["1",10,5,10,5,1],["1",11,4,11,4,1],["o",5,4,5,4,1],["1",2,6,2,6,1],["1",0,4,0,4,1],["1",9,4,9,4,1],["1",11,6,11,6,1],["1",1,5,1,5,1]],"würfeln":[[0,4,1],[1,0,1],[9,4,1]],"spielstand":[8,5],"level_b":12,"level_h":7},
+// {"entitäten":[["s",7,2,7,2],["o",5,3,5,3,1],["o",6,4,6,4],["1",1,2,1,2,1],["1",2,1,2,1,1],["1",3,2,3,2,1],["1",3,0,3,0,1],["1",1,0,1,0,1],["1",9,6,9,6,1],["1",10,5,10,5,1],["1",11,4,11,4,1],["o",5,4,5,4,1],["1",2,6,2,6,1],["1",0,4,0,4,1],["1",9,4,9,4,1],["1",11,6,11,6,1]],"würfeln":[[0,4,1],[1,0,1],[9,4,1]],"spielstand":[7,5],"level_b":12,"level_h":7},
+// {"entitäten":[["s",7,2,7,2],["o",5,3,5,3,1],["o",6,4,6,4],["1",1,2,1,2,1],["1",2,1,2,1,1],["1",3,2,3,2,1],["1",3,0,3,0,1],["1",1,0,1,0,1],["1",11,2,11,2,1],["1",9,0,9,0,1],["1",9,6,9,6,1],["1",10,5,10,5,1],["1",11,4,11,4,1],["o",5,4,5,4,1],["1",2,6,2,6,1],["1",0,4,0,4,1]],"würfeln":[[1,0,1],[9,0,1],[9,4,1],[0,4,1]],"spielstand":[7,5],"level_b":12,"level_h":7},
+// {"entitäten":[["s",6,1,6,1],["o",3,2,3,2],["o",4,3,4,3],["o",3,3,3,3]],"würfeln":[],"spielstand":[0,0],"level_b":8,"level_h":5},
+
 ]
 
 let leveloff_x=0;
@@ -521,7 +603,7 @@ function getVal(key, default_val){
 				if (titelindex>0){
 					titelindex--;
 				}
-				if (savedlevel===0&&titelindex===1){
+				if (level===0&&titelindex===1){
 					titelindex=0;
 				}
 				render();
@@ -530,7 +612,7 @@ function getVal(key, default_val){
 				if (titelindex<3){
 					titelindex++;
 				}
-				if (savedlevel===0&&titelindex===1){
+				if (level===0&&titelindex===1){
 					titelindex=2;
 				}
 				render();
@@ -556,11 +638,11 @@ function getVal(key, default_val){
 			case 4:
 				if (titelindex===0){
 					level=0;
-					setVal("savedlevel",0);
+					setVal("level",0);
 					setGameState("SPIEL");
 					return;
 				} else if (titelindex===1){
-					level=savedlevel;
+					level=level;
 					setGameState("SPIEL");
 					return;
 				} else if (titelindex===2){
@@ -711,7 +793,11 @@ function getVal(key, default_val){
 
 	function onSpielInput(k){
 		console.log(k);
+		var szs = siegzustand();
 		if (k<4){
+			if (szs>=0){
+				return;
+			}
 			let player = getSpieler();
 			var [dx,dy]=dirToDelta(k);
 			let tx = player[1]+dx;
@@ -774,6 +860,10 @@ function getVal(key, default_val){
 		} else if (k===6){//restart
 			neustart();
 			render();
+		} else if (k===4){
+			if (szs===2){				
+					winLevel();
+			}
 		}
 
 
@@ -871,7 +961,7 @@ function getVal(key, default_val){
 
 				renderSpiel(false);
 			} else if (e.keyCode=='189'){//-
-				if (level>0){
+				if(level>0){
 					level--;
 					ladenZustand(JSON.stringify(levels[level]));
 
@@ -918,17 +1008,19 @@ function getVal(key, default_val){
 			break;
 			case 2:
 			if (subtract){
-				dx=-1;
+				dx--;
 				level_b-=2;
 			} else {
-				dx=1;
+				dx+=2;
 				level_b+=2;
 			}
 			break;
 			case 3:
 			if (subtract){
+				dx--;
 				level_b-=2;
 			}else{
+				// dx++;
 				level_b+=2;
 			}
 			break;
@@ -1001,7 +1093,7 @@ function getVal(key, default_val){
 		steuerungtext_el.textContent = S("Steurung : Pfeiltasten, Z (Rückgängig), R (neustart)","Controls : Arrow Keys, Z (Undo), R (Restart)");
 		menü1_el.textContent= S("Neues Spiel","New Game").toUpperCase();
 		menü2_el.textContent= S("Fortfahren","Continue").toUpperCase();
-		if (savedlevel===0){
+		if (level===0){
 			menü2_el.className.baseVal="seite-schatten";
 		} else {
 			menü2_el.className.baseVal="";
@@ -1203,6 +1295,27 @@ function getVal(key, default_val){
 		}
 		console.log("error kante not found")
 	}
+
+	//-1 = nicht fertig, 0 = verlust, 1 =unentschieden, 2 = gewinnen
+	function siegzustand(){
+		if (editmodus){
+			return -1;
+		}
+		for (var i=0;i<entitäten.length;i++){
+			var e = entitäten[i];
+			if (e[0]=="o"){
+				return -1;
+			}
+		}
+		if(spielstand[0]==spielstand[1]){
+			return 1;
+		} else if (spielstand[0]>spielstand[1]){
+			return 0;
+		} else {
+			return 2;
+		}
+	}
+
 	function Konturausrechnung(ebene,sx,sy,sdir,kanten){
 		let x = sx;
 		let y = sy;
@@ -1348,6 +1461,8 @@ function getVal(key, default_val){
 		let genbg = lastlb!==level_b||lastlh!==level_h;
 
 	
+		//-1 = nicht fertig, 0 = verlust, 1 =unentschieden, 2 = gewinnen
+		var v = siegzustand();
 
 		lastlb=level_b;
 		lastlh=level_h;
@@ -1559,32 +1674,176 @@ svgbg+=`
 					`
 				break;			
 				case "s":
-				svg+=`
-					<line class="spieler_auserer_feuerrand" x1="5" y1="3" x2="7" y2="3"/>
+				if (v===2){
+
+				svg+=`<g style="display:none;">
+					//kopf
+					//linkes bein
 					<line class="spieler_auserer_feuerrand" x1="4" y1="9" x2="6" y2="6.43"/>
+					//rechtest bein
 					<line class="spieler_auserer_feuerrand" x1="8" y1="9" x2="6" y2="6.43"/>
-					<line class="spieler_auserer_feuerrand" x1="6" y1="3.86" x2="3" y2="5.57"/>
-					<line class="spieler_auserer_feuerrand" x1="9" y1="5.57" x2="6" y2="3.86"/>
+					//linke Hand
+					<line class="spieler_auserer_feuerrand" x1="3" y1="3.86" x2="6" y2="5.57"/>
+					//rechte hand
+					<line class="spieler_auserer_feuerrand" x1="6" y1="5.57" x2="9" y2="3.86"/>
+					//körper
 					<line class="spieler_auserer_feuerrand" x1="6" y1="6.43" x2="6" y2="3"/>
+					//kopf
 					<line class="spieler_auserer_feuerrand" x1="5" y1="3" x2="7" y2="3"/>
 
 
-					<line class="spieler_auserer_feuerrand_innen" x1="5" y1="3" x2="7" y2="3"/>
+					//kopf
+					//linkes bein
 					<line class="spieler_auserer_feuerrand_innen" x1="4" y1="9" x2="6" y2="6.43"/>
+					//rechtest bein
 					<line class="spieler_auserer_feuerrand_innen" x1="8" y1="9" x2="6" y2="6.43"/>
-					<line class="spieler_auserer_feuerrand_innen" x1="6" y1="3.86" x2="3" y2="5.57"/>
-					<line class="spieler_auserer_feuerrand_innen" x1="9" y1="5.57" x2="6" y2="3.86"/>
+					//linke Hand
+					<line class="spieler_auserer_feuerrand_innen" x1="3" y1="3.86" x2="6" y2="5.57"/>
+					//rechte hand
+					<line class="spieler_auserer_feuerrand_innen" x1="6" y1="5.57" x2="9" y2="3.86"/>
+					//körper
 					<line class="spieler_auserer_feuerrand_innen" x1="6" y1="6.43" x2="6" y2="3"/>
+					//kopf
 					<line class="spieler_auserer_feuerrand_innen" x1="5" y1="3" x2="7" y2="3"/>
 
 
+
+					//kopf
+					//linkes bein
 					<line class="spieler_innen" x1="4" y1="9" x2="6" y2="6.43"/>
+					//rechtest bein
 					<line class="spieler_innen" x1="8" y1="9" x2="6" y2="6.43"/>
-					<line class="spieler_innen" x1="6" y1="3.86" x2="3" y2="5.57"/>
-					<line class="spieler_innen" x1="9" y1="5.57" x2="6" y2="3.86"/>
+					//linke Hand
+					<line class="spieler_innen" x1="3" y1="3.86" x2="6" y2="5.57"/>
+					//rechte hand
+					<line class="spieler_innen" x1="6" y1="5.57" x2="9" y2="3.86"/>
+					//körper
 					<line class="spieler_innen" x1="6" y1="6.43" x2="6" y2="3"/>
+					//kopf
 					<line class="spieler_innen" x1="5" y1="3" x2="7" y2="3"/>
+					
+						<animate
+						      id="frame2"
+						      attributeName="display"
+						      values="inline;none;none"
+						      keyTimes="0;0.55;1"
+						      dur="1s"
+						      begin="0.2s"
+						      repeatCount="indefinite" />
+
+				</g>
 				`//FEUERSPIELER
+
+
+					svg+=`
+					<g>
+						//kopf
+						//linkes bein
+						<line class="spieler_auserer_feuerrand" x1="4" y1="9" x2="6" y2="6.43"/>
+						//rechtest bein
+						<line class="spieler_auserer_feuerrand" x1="8" y1="9" x2="6" y2="6.43"/>
+						//linke Hand
+						<line class="spieler_auserer_feuerrand" x1="6" y1="3.86" x2="3" y2="5.57"/>
+						//rechte hand
+						<line class="spieler_auserer_feuerrand" x1="9" y1="5.57" x2="6" y2="3.86"/>
+						//körper
+						<line class="spieler_auserer_feuerrand" x1="6" y1="6.43" x2="6" y2="3"/>
+						//kopf
+						<line class="spieler_auserer_feuerrand" x1="5" y1="3" x2="7" y2="3"/>
+
+
+						//kopf
+						//linkes bein
+						<line class="spieler_auserer_feuerrand_innen" x1="4" y1="9" x2="6" y2="6.43"/>
+						//rechtest bein
+						<line class="spieler_auserer_feuerrand_innen" x1="8" y1="9" x2="6" y2="6.43"/>
+						//linke Hand
+						<line class="spieler_auserer_feuerrand_innen" x1="6" y1="3.86" x2="3" y2="5.57"/>
+						//rechte hand
+						<line class="spieler_auserer_feuerrand_innen" x1="9" y1="5.57" x2="6" y2="3.86"/>
+						//körper
+						<line class="spieler_auserer_feuerrand_innen" x1="6" y1="6.43" x2="6" y2="3"/>
+						//kopf
+						<line class="spieler_auserer_feuerrand_innen" x1="5" y1="3" x2="7" y2="3"/>
+
+
+
+						//kopf
+						//linkes bein
+						<line class="spieler_innen" x1="4" y1="9" x2="6" y2="6.43"/>
+						//rechtest bein
+						<line class="spieler_innen" x1="8" y1="9" x2="6" y2="6.43"/>
+						//linke Hand
+						<line class="spieler_innen" x1="6" y1="3.86" x2="3" y2="5.57"/>
+						//rechte hand
+						<line class="spieler_innen" x1="9" y1="5.57" x2="6" y2="3.86"/>
+						//körper
+						<line class="spieler_innen" x1="6" y1="6.43" x2="6" y2="3"/>
+						//kopf
+						<line class="spieler_innen" x1="5" y1="3" x2="7" y2="3"/>
+
+
+						<animate
+						      id="frame2"
+						      attributeName="display"
+						      values="none;inline;none"
+						      keyTimes="0;0.55;1"
+						      dur="1s"
+						      begin="0.2s"
+						      repeatCount="indefinite" />
+					</g>
+					`//FEUERSPIELER
+
+				} else {
+					svg+=`
+						//kopf
+						//linkes bein
+						<line class="spieler_auserer_feuerrand" x1="4" y1="9" x2="6" y2="6.43"/>
+						//rechtest bein
+						<line class="spieler_auserer_feuerrand" x1="8" y1="9" x2="6" y2="6.43"/>
+						//linke Hand
+						<line class="spieler_auserer_feuerrand" x1="6" y1="3.86" x2="3" y2="5.57"/>
+						//rechte hand
+						<line class="spieler_auserer_feuerrand" x1="9" y1="5.57" x2="6" y2="3.86"/>
+						//körper
+						<line class="spieler_auserer_feuerrand" x1="6" y1="6.43" x2="6" y2="3"/>
+						//kopf
+						<line class="spieler_auserer_feuerrand" x1="5" y1="3" x2="7" y2="3"/>
+
+
+						//kopf
+						//linkes bein
+						<line class="spieler_auserer_feuerrand_innen" x1="4" y1="9" x2="6" y2="6.43"/>
+						//rechtest bein
+						<line class="spieler_auserer_feuerrand_innen" x1="8" y1="9" x2="6" y2="6.43"/>
+						//linke Hand
+						<line class="spieler_auserer_feuerrand_innen" x1="6" y1="3.86" x2="3" y2="5.57"/>
+						//rechte hand
+						<line class="spieler_auserer_feuerrand_innen" x1="9" y1="5.57" x2="6" y2="3.86"/>
+						//körper
+						<line class="spieler_auserer_feuerrand_innen" x1="6" y1="6.43" x2="6" y2="3"/>
+						//kopf
+						<line class="spieler_auserer_feuerrand_innen" x1="5" y1="3" x2="7" y2="3"/>
+
+
+
+						//kopf
+						//linkes bein
+						<line class="spieler_innen" x1="4" y1="9" x2="6" y2="6.43"/>
+						//rechtest bein
+						<line class="spieler_innen" x1="8" y1="9" x2="6" y2="6.43"/>
+						//linke Hand
+						<line class="spieler_innen" x1="6" y1="3.86" x2="3" y2="5.57"/>
+						//rechte hand
+						<line class="spieler_innen" x1="9" y1="5.57" x2="6" y2="3.86"/>
+						//körper
+						<line class="spieler_innen" x1="6" y1="6.43" x2="6" y2="3"/>
+						//kopf
+						<line class="spieler_innen" x1="5" y1="3" x2="7" y2="3"/>
+
+
+					`//FEUERSPIELER
+				}
 				break;
 
 				default://Auge
@@ -1657,13 +1916,52 @@ svgbg+=`
 
 			svg+=printText(o_seite_rand_x,o_seite_rand_y,
 				S(
-				`Augenschlepper (Level ${level}${level_b>6?" von ":"/"}${levels.length})`,
-				`Pip Schlepper (Level ${level} of ${levels.length})`)
+				`${S(levelnamen[level][0],levelnamen[level][1])} (${level+1}${level_b>6?" von ":"/"}${levels.length})`,
+				`${S(levelnamen[level][0],levelnamen[level][1])} (${level+1} of ${levels.length})`)
 				);
 			svg+=printText(o_seite_rand_x,o_seite_rand_y+12,S("GEGNER","ENEMY")+` : ${spielstand[0]}`);
 			svg+=printText(o_seite_rand_x+12*level_b/2,o_seite_rand_y+12,S("DU","YOU")+` : ${spielstand[1]}`);
 		}
 
+var modal_ox = o_bildschirm_rand_x+12*(level_b/2-3)+0.5;
+var modal_oy = 1;//o_bildschirm_rand_y+1;
+var modal_x = 0;
+var modal_y = 0;
+var modal_b = 12*6-1;
+var modal_h = 12*3-2-6;
+
+if (v>=0)
+{
+	svg+=`<g transform="translate(${-100},${-100})">    
+
+                <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          from="${modal_ox} ${modal_oy-50}"
+                          to="${modal_ox} ${modal_oy}"
+                          fill="freeze"
+                          dur="0.4s"
+                          repeatCount="once"/>`
+	svg+=`<rect class="seite-schatten" x="${modal_x+1}" y="${modal_y+1}" width="${modal_b}" height="${modal_h}"/>   `
+	svg+=`<rect class="seite-modal" x="${modal_x}" y="${modal_y}" width="${modal_b}" height="${modal_h}"/>   `
+	svg+=`<rect class="seite-modal-innen" x="${modal_x+1}" y="${modal_y+1}" width="${modal_b-2}" height="${modal_h-2}"/>   `
+	if (v===0){
+		svg+=`<text class="seite-modal-spielstand" x="${modal_x+modal_b/2}" y="2">${spielstand[0]}:${spielstand[1]}</text>`
+		svg+=`<text class="seite-modal-titel" x="${modal_x+modal_b/2}" y="10">Verlust</text>`
+		svg+=`<text class="seite-modal-text" x="${modal_x+modal_b/2}" y="20">Drücken Sie R oder Z</text>`
+	} else if (v===1){
+
+
+		svg+=`<text class="seite-modal-spielstand" x="${modal_x+modal_b/2}" y="2">${spielstand[0]}:${spielstand[1]}</text>`
+		svg+=`<text class="seite-modal-titel" x="${modal_x+modal_b/2}" y="10">Unentschieden</text>`
+		svg+=`<text class="seite-modal-text" x="${modal_x+modal_b/2}" y="20">Drücken Sie R oder Z</text>`
+	} else {
+		svg+=`<text class="seite-modal-spielstand" x="${modal_x+modal_b/2}" y="2">${spielstand[0]}:${spielstand[1]}</text>`
+		svg+=`<text class="seite-modal-titel" x="${modal_x+modal_b/2}" y="10">Siegreich!</text>`
+		svg+=`<text class="seite-modal-text" x="${modal_x+modal_b/2}" y="20">(X um fortzufahren)</text>`
+	}
+	svg+=`</g>`
+}
 
 	svg+=`</g>Sorry, your browser does not support inline SVG and so you can't play this game sadface.</svg>`;
 
@@ -1725,6 +2023,19 @@ svgbg+=`
 		undoZustände.push(undoZustände[0]);
 		let zustand_str=undoZustände[undoZustände.length-1];
 		ladenZustand(zustand_str);	
+	}
+
+
+	function winLevel(){
+		if (level+1<levels.length){
+			level++;
+			setVal("level",level);
+			setGameState("SPIEL");		
+		} else {
+			level=0;
+			setVal("level",level);
+			setGameState("TITEL");	
+		}
 	}
 
 	function startSpiel(){
@@ -1911,12 +2222,12 @@ function getRandomInt(min, max) {
 	}
 
 	let titelindex=0;
-	let savedlevel=0;
+	let level=0;
 
 	let würfelrollid=-1;
 
 	function startTitel(){
-		if (savedlevel>0){
+		if (level>0){
 			titelindex=1;
 		} else {
 			titelindex=0;
@@ -1945,8 +2256,8 @@ function getRandomInt(min, max) {
 		audio=getVal("audio",1);
 		sprache=getVal("sprache","EN");
 		document.title = S("Augenschlepper","Pip Schlepper");
-		savedlevel=getVal("savedlevel",0);
-		if (savedlevel>0){
+		level=getVal("level",0);
+		if (level>0){
 			titelindex=1;
 		} else {
 			titelindex=0;
@@ -1954,7 +2265,6 @@ function getRandomInt(min, max) {
 		document.onkeydown = checkKey;	
 		document.onkeyup = onKeyup;	
 		document.onfocus = onFocus;	
-		level=0;
 
 		setGameState("TITEL")
 
