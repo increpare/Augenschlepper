@@ -86,6 +86,12 @@
 			fill:none;
 		}
 
+		.HelpText {
+			font-family: 'embeddedfont', cursive;
+	    	font-size: 3pt; 	
+			align-items: left;
+		}
+
 		.seite {
 			fill:var(--bg);
 			stroke:none;
@@ -318,7 +324,7 @@
 
 <script>
 
-let editmodus=true;
+let editmodus=false;
 
 let movedur=0.1;
 let fadeindur=0.2;
@@ -335,7 +341,7 @@ let levelnamen = [
 	["Los gehts!","Let's go!"],
 	["Augenzählen","Counting dots"],
 	["Doch.","Yes it is possible"],
-	["Des Verlierers Bedarf","Losers also have needs"],
+	["Des Verlierers Bedarf","Loser's also have needs"],
 	["Zu verlieren kein Chance","This is yours to lose"],
 	["Eng.","A bit cramped, innit."],
 	["Versperrt","Obstructions"],
@@ -574,14 +580,25 @@ function getVal(key, default_val){
 		}
 	}
 
-	let keyAllowed = {};
+	let keydownar = {};
 
 	function onFocus(e){
-		keyAllowed = {};
+		for (var key in keydownar) {
+		    if (keydownar.hasOwnProperty(key)) {
+				clearInterval(keydownar[key]);
+		    }
+		}
+
+		keydownar = {};
 	}
 
 	function onKeyup(e){
-		keyAllowed [e.which] = true;
+		let val = keydownar [e.which]; 
+		if (val != null){
+			clearInterval(val);
+			delete keydownar[e.which];
+		} 
+
 	}
 
 	function wechselsprache(){
@@ -609,7 +626,7 @@ function getVal(key, default_val){
 				render();
 				break;
 			case 1:
-				if (titelindex<3){
+				if (titelindex<4){
 					titelindex++;
 				}
 				if (level===0&&titelindex===1){
@@ -649,7 +666,10 @@ function getVal(key, default_val){
 					wechselsprache();
 				} else if (titelindex===3){
 					wechselaudio();
-				}
+				} else if (titelindex===4){
+					setGameState("HILFE");
+					return;
+				} 
 				render();
 				break;
 		}
@@ -869,8 +889,17 @@ function getVal(key, default_val){
 
 	}
 
+
+	function onHilfeInput(k){
+		if (k===4||k===7){
+			setGameState("TITEL");
+			titelindex=4;
+			render();
+		}
+	}
+
 	function onInput(k){
-		if (k===7&&gameState!=="TITEL"){
+		if (k===7&&gameState!=="TITEL"&&gameState!=="HILFE"){
 			setGameState("TITEL");
 			return;
 		}
@@ -881,19 +910,32 @@ function getVal(key, default_val){
 			case "SPIEL":
 			onSpielInput(k);
 			break;
+			case "HILFE":
+			onHilfeInput(k);
+			break;
 		}
 	}
 
-	function checkKey(e) {
+	function checkKey(e,manual) {
 	    e = e || window.event;
 
-		if (keyAllowed [e.which] === false) {
+	    var justpressed=false;
+		if (keydownar [e.which] == null) {
+			keydownar[e.which] = setInterval(()=>checkKey(e,true),200 );			
+			justpressed=true;
+		}
+
+		if (justpressed===false){
 			if (e.keyCode == '88' || e.keyCode =='32'||e.keyCode =='13'||e.keyCode =='68'){
-				return;
+				return false;
 			}
 		}
-		keyAllowed [e.which] = false;
-		 
+
+		if (manual!=true &&!justpressed){
+	    	e.preventDefault();
+			return false;
+		}
+
 	    if (e.keyCode == '38') {
 	        // up arrow
 	    	onInput(0);
@@ -1064,6 +1106,76 @@ function getVal(key, default_val){
 
 	}
 
+	function renderHilfe(){
+		var text = S(`
+	+Sie müßen Würfelflächen basteln.
+	+Wenn Augen so eine Würfelfläche formen, werden sie gezahlt: der Gegner 
+	erhielt Punkte von auf der linken Seite stellenden Augen, und Sie von den 
+	Augen auf der rechter.
+	+Eine Würfelfläche kann nicht eine schon bestehende Würfelflache überlappen.
+	+Solche Augen können nicht wieder verwendet, und obwohl Sie können durch 
+	leeren Würfelfluacheplatz bewegen, Sie können nicht ansonsten bewegbarere 
+	Augen durch den Platz einer Würfelflache schieben.
+	+Um zu gewinnen, Sie müssen alle Augen verwenden, und auch mehre Punkte als 
+	der gegner erhalten.
+			`,`
+	+You must build dice faces.
+	+When pips form a face, they are scored.  
+	+The enemy gets points from pips on the left side, and you from those on the 
+	right.
+	+Scored pips can not be scored again, or even pushed.  
+	+A dice face may not form overlapping a pre-existing dice face.
+	+Though you can walk through empty space in a scored dice, you cannot push pips 
+	onto a scored dice face.
+	+In order to win you must ensure all pips are used, and also that you have more 
+	points than your opponent.
+			`);
+		text=text.trim();
+		lines = text.split("\n");
+
+		let svg = "";
+		let svgbg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 97.5 57.5">
+<g id="Ebene_2" data-name="Ebene 2">
+    <g id="Ebene_5" data-name="Ebene 5">
+        <g id="TitelBildSchirm">
+                <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          from="0 50"
+                          to="0 0"
+                          dur="0.4s"
+                          repeatCount="once"/>
+            <rect class="seite-schatten" x="17.25" y="2.25" width="62" height="50"/>
+            <rect class="tbs-2" x="16.25" y="1.25" width="62" height="50"/>
+            <rect class="tbs-3" x="17.25" y="2.25" width="60" height="48"/>
+            <text id="TitelText" class="tbs-4" transform="translate(47.8 12.7)">${S("Hilfe","Help")}</text>
+            <text class="HelpText" transform="translate(19 16) scale(0.6 0.6)">`
+            // svgbg+=text;
+            for (var i=0;i<lines.length;i++){
+            	var l = lines[i].trim();
+            	if (l===""){
+            		break;
+            	}
+            	svgbg+=`<tspan x="0" y="${5*i}">${l}</tspan>`
+            }
+            // 		<tspan id="menü1" x="0" y="0">[ NEUES SPIEL ]</tspan>
+            // 		<tspan id="menü2" x="0" y="8.24">FORTSETZEN</tspan>
+            // 		<tspan id="menü3" x="0" y="16.48">SPRACHE:DEUTSCH</tspan>
+            // 		<tspan id="menü4" x="0" y="24.48">AUDIO:EIN</tspan>
+
+        svgbg+=`</text>
+        <text id="MenuText" class="tbs-5" transform="translate(47.8 20.6) scale(0.6 0.6)">	
+        <tspan id="menü5" x="0" y="46">${S("X - Zurück","X to go back")}</tspan>	
+        </text>
+            </g>
+</g>
+</g>
+</svg>`;
+
+		document.getElementById("bgcontainer").innerHTML=svgbg;
+		document.getElementById("svgcontainer").innerHTML=svg;		
+	}
+
 	function render(){
 		switch(gameState){
 			case "TITEL":
@@ -1072,8 +1184,56 @@ function getVal(key, default_val){
 			case "SPIEL":
 				renderSpiel(true);
 				break;
+			case "HILFE":
+				renderHilfe(true);
+				break;
 		}
 	}
+
+function wrapTextRect(text,font,fontgröße)
+{
+    //---clear previous---
+    for(var k=myText.childNodes.length-1;k>=0;k--)
+        myText.removeChild(myText.childNodes.item(k))
+
+    var padding=10
+    var width=+myRect.getAttribute("width")-padding
+    var x=+myRect.getAttribute("x")
+    var y=+myRect.getAttribute("y")
+    var fontSize=+myText.getAttribute("font-size")
+    var text=myTextValue.value
+
+    var words = text.split(' ');
+    var text_element = document.getElementById('myText');
+    var tspan_element = document.createElementNS(NS, "tspan");   // Create first tspan element
+    var text_node = document.createTextNode(words[0]);           // Create text in tspan element
+    tspan_element.setAttribute("x", x+padding);
+    tspan_element.setAttribute("y", y+padding+fontSize);
+    tspan_element.appendChild(text_node);                           // Add tspan element to DOM
+    text_element.appendChild(tspan_element);                        // Add text to tspan element
+
+    for(var i=1; i<words.length; i++)
+    {
+        var len = tspan_element.firstChild.data.length            // Find number of letters in string
+        tspan_element.firstChild.data += " " + words[i];            // Add next word
+
+        if (tspan_element.getComputedTextLength() > width-padding)
+        {
+            tspan_element.firstChild.data = tspan_element.firstChild.data.slice(0, len);    // Remove added word
+
+            var tspan_element = document.createElementNS(NS, "tspan");       // Create new tspan element
+            tspan_element.setAttribute("x",  x+padding);
+            tspan_element.setAttribute("dy", fontSize);
+            text_node = document.createTextNode(words[i]);
+            tspan_element.appendChild(text_node);
+            text_element.appendChild(tspan_element);
+        }
+    }
+
+    var height = text_element.getBBox().height +2*padding; //-- get height plus padding
+    myRect.setAttribute('height', height); //-- change rect height
+    showSourceSVG()
+}
 
 	function titelwertesetzen(){
 
@@ -1084,6 +1244,7 @@ function getVal(key, default_val){
 		menü2_el = document.getElementById("menü2");
 		menü3_el = document.getElementById("menü3");
 		menü4_el = document.getElementById("menü4");
+		menü5_el = document.getElementById("menü5");
 
 		let titel_str = S("Augenschlepper","Pip Schlepper");
 		titeltext_el.textContent=titel_str;
@@ -1104,6 +1265,7 @@ function getVal(key, default_val){
 		} else {
 			menü4_el.textContent= S("Audio:AUS","Audio:OFF").toUpperCase();			
 		}
+		menü5_el.textContent= S("Hilfe","Help").toUpperCase();			
 
 		switch(titelindex){
 			case 0:
@@ -1118,6 +1280,9 @@ function getVal(key, default_val){
 			case 3:
 				menü4_el.textContent="+ "+menü4_el.textContent+" +";
 				break;
+			case 4:
+				menü5_el.textContent="+ "+menü5_el.textContent+" +";
+				break;			
 		}
 		console.log(titeltext_el);
 	}
@@ -1145,11 +1310,12 @@ function getVal(key, default_val){
             <rect class="tbs-2" x="16.25" y="1.25" width="62" height="50"/>
             <rect class="tbs-3" x="17.25" y="2.25" width="60" height="48"/>
             <text id="TitelText" class="tbs-4" transform="translate(47.8 12.7)">AUGENSCHLEPPER</text>
-            <text id="MenuText" class="tbs-5" transform="translate(47.8 22.25) scale(0.7 0.7)">
+            <text id="MenuText" class="tbs-5" transform="translate(47.8 20.6) scale(0.6 0.6)">
             		<tspan id="menü1" x="0" y="0">[ NEUES SPIEL ]</tspan>
             		<tspan id="menü2" x="0" y="8.24">FORTSETZEN</tspan>
             		<tspan id="menü3" x="0" y="16.48">SPRACHE:DEUTSCH</tspan>
             		<tspan id="menü4" x="0" y="24.48">AUDIO:EIN</tspan>
+            		<tspan id="menü5" x="0" y="32.48">HILFE</tspan>
         </text>
         <line class="tbs-6" x1="17.25" y1="14.25" x2="77.25" y2="14.25"/>
 
@@ -1947,18 +2113,18 @@ if (v>=0)
 	svg+=`<rect class="seite-modal-innen" x="${modal_x+1}" y="${modal_y+1}" width="${modal_b-2}" height="${modal_h-2}"/>   `
 	if (v===0){
 		svg+=`<text class="seite-modal-spielstand" x="${modal_x+modal_b/2}" y="2">${spielstand[0]}:${spielstand[1]}</text>`
-		svg+=`<text class="seite-modal-titel" x="${modal_x+modal_b/2}" y="10">Verlust</text>`
-		svg+=`<text class="seite-modal-text" x="${modal_x+modal_b/2}" y="20">Drücken Sie R oder Z</text>`
+		svg+=`<text class="seite-modal-titel" x="${modal_x+modal_b/2}" y="10">${S("Verlust","You lost")}</text>`
+		svg+=`<text class="seite-modal-text" x="${modal_x+modal_b/2}" y="20">${S("Drücken Sie R oder Z","Press R or Z")}</text>`
 	} else if (v===1){
 
 
 		svg+=`<text class="seite-modal-spielstand" x="${modal_x+modal_b/2}" y="2">${spielstand[0]}:${spielstand[1]}</text>`
-		svg+=`<text class="seite-modal-titel" x="${modal_x+modal_b/2}" y="10">Unentschieden</text>`
-		svg+=`<text class="seite-modal-text" x="${modal_x+modal_b/2}" y="20">Drücken Sie R oder Z</text>`
+		svg+=`<text class="seite-modal-titel" x="${modal_x+modal_b/2}" y="10">${S("Unentschieden","A Draw")}</text>`
+		svg+=`<text class="seite-modal-text" x="${modal_x+modal_b/2}" y="20">${S("Drücken Sie R oder Z","Press R or Z")}</text>`
 	} else {
 		svg+=`<text class="seite-modal-spielstand" x="${modal_x+modal_b/2}" y="2">${spielstand[0]}:${spielstand[1]}</text>`
-		svg+=`<text class="seite-modal-titel" x="${modal_x+modal_b/2}" y="10">Siegreich!</text>`
-		svg+=`<text class="seite-modal-text" x="${modal_x+modal_b/2}" y="20">(X um fortzufahren)</text>`
+		svg+=`<text class="seite-modal-titel" x="${modal_x+modal_b/2}" y="10">${S("Siegreich!","You won!")}</text>`
+		svg+=`<text class="seite-modal-text" x="${modal_x+modal_b/2}" y="20">${S("(X um fortzufahren)","(X to continue)")}</text>`
 	}
 	svg+=`</g>`
 }
