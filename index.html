@@ -967,22 +967,22 @@ function getVal(key, default_val){
 			return false;
 		}
 
-	    if (e.keyCode == '38') {
+	    if (e.keyCode == '38' || (editmodus===false && e.keyCode == '87')) {
 	        // up arrow
 	    	onInput(0);
 	    	e.preventDefault();
 	    }
-	    else if (e.keyCode == '40') {
+	    else if (e.keyCode == '40' || (editmodus===false && e.keyCode == '83')) {
 	        // down arrow
 	    	onInput(1);
 	    	e.preventDefault();
 	    }
-	    else if (e.keyCode == '37') {
+	    else if (e.keyCode == '37' || (editmodus===false && e.keyCode == '65')) {
 	       // left arrow
 	    	onInput(2);
 	    	e.preventDefault();
 	    }
-	    else if (e.keyCode == '39') {
+	    else if (e.keyCode == '39' || (editmodus===false && e.keyCode == '68')) {
 	       // right arrow
 	    	onInput(3);
 	    	e.preventDefault();
