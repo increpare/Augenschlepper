@@ -322,12 +322,16 @@
 
 <body>
 
+<script type="text/javascript" src="rng.js"></script>
+<script type="text/javascript" src="recorder.js"></script>
+<script type="text/javascript" src="sfxr.js"></script>
+
 <script>
 
 let editmodus=false;
 
 let movedur=0.1;
-let fadeindur=0.2;
+let fadeindur=0.15;
 
 
 let spielstand=[0,0];
@@ -352,6 +356,9 @@ let levelnamen = [
 ]
 
 let levels = [
+
+//TEST LEVEL, REMOVE
+// {"entitäten":[["o",0,0,0,0,"o"],["o",0,4,0,4,"o"],["o",3,4,3,4,"o"],["o",2,3,2,3,"o"],["s",2,4,2,4,"s"]],"würfeln":[],"spielstand":[0,0],"level_b":10,"level_h":5},
 
 //0
 // {"entitäten":[["s",11,4,11,4,"s"],["o",7,4,7,4,"o"],["o",6,4,6,4,"o"],["1",0,0,0,0,"1"],["1",0,2,0,2,"1"],["1",2,2,2,2,"1"],["1",2,0,2,0,"1"],["1",15,6,15,6,"1"],["1",17,8,17,8,"1"],["1",0,8,0,8,"1"],["1",17,2,17,2,"1"],["1",15,0,15,0,"1"],["1",16,4,16,4,"1"],["1",0,6,0,6,"1"],["1",2,8,2,8,"1"],["1",1,0,1,0,"1"],["1",1,2,1,2,"1"],["1",15,3,15,3,"1"],["1",15,5,15,5,"1"],["1",17,5,17,5,"1"],["1",17,3,17,3,"1"],["1",2,6,2,6,"1"],["1",16,1,16,1,"1"],["1",1,4,1,4,"1"]],"würfeln":[[0,0,1],[0,6,1],[15,0,1],[15,3,1],[15,6,1],[0,3,1]],"spielstand":[11,10],"level_b":18,"level_h":9},
@@ -490,6 +497,25 @@ function S(de,en){
 	}
 }
 
+function sfx(n){
+	if (audio===0){
+		return;
+	}
+	switch(n){
+		case 0://menu select
+			playSound(51449700,0.1);
+			break;
+		case 1://loud
+			playSound(87657300,0.2);
+			break;
+		case 2://push
+			playSound(29758507,0.2);
+			break;
+		case 3://undo/restart
+			playSound(29758507,0.2);
+			break;
+	}
+}
 
 let gameName="pipschlepper"
 function setVal(key,val){
@@ -506,13 +532,11 @@ function getVal(key, default_val){
 	    if (val===null){
 	    	return default_val;
 	    } else {
-	    	if (val==="0"){
-	    		return 0
+	    	if (isNaN(parseInt(val))){
+	    		return val;
+	    	} else {
+	    		return parseInt(val);
 	    	}
-	    	if (val==="1"){
-	    		return 1;
-	    	}
-	    	return val;
 	    }
 	} else {
     	return default_val;
@@ -608,17 +632,22 @@ function getVal(key, default_val){
 			sprache="DE";			
 		}
 		setVal("sprache",sprache);
+		sfx(0);
 	}
 
 	function wechselaudio(){
 		audio=1-audio;
 		setVal("audio",audio);
+		sfx(0);
 	}
+
 	function onTitelInput(k){
 		switch(k){
 			case 0:
 				if (titelindex>0){
 					titelindex--;
+
+					sfx(0);
 				}
 				if (level===0&&titelindex===1){
 					titelindex=0;
@@ -628,6 +657,8 @@ function getVal(key, default_val){
 			case 1:
 				if (titelindex<4){
 					titelindex++;
+
+					sfx(0);
 				}
 				if (level===0&&titelindex===1){
 					titelindex=2;
@@ -656,10 +687,13 @@ function getVal(key, default_val){
 				if (titelindex===0){
 					level=0;
 					setVal("level",0);
+					dolevelanim=true;
 					setGameState("SPIEL");
+					sfx(1);
 					return;
 				} else if (titelindex===1){
 					level=level;
+					dolevelanim=true;
 					setGameState("SPIEL");
 					return;
 				} else if (titelindex===2){
@@ -787,7 +821,7 @@ function getVal(key, default_val){
                           from="0 -50"
                           to="0 0"
                           dur="0.4s"
-                          repeatCount="once"/>`
+                          repeatCount="1"/>`
         
 
 		let ox=o_bildschirm_rand_x+o_bildschirm_zelle_g_b*entität[1];
@@ -812,7 +846,6 @@ function getVal(key, default_val){
 	}
 
 	function onSpielInput(k){
-		console.log(k);
 		var szs = siegzustand();
 		if (k<4){
 			if (szs>=0){
@@ -834,7 +867,7 @@ function getVal(key, default_val){
 					pip[1]=ttx;
 					pip[2]=tty;
 					pip=null;
-
+					sfx(2);
 					würfelMelden();
 				}
 			}
@@ -919,16 +952,14 @@ function getVal(key, default_val){
 	function checkKey(e,manual) {
 	    e = e || window.event;
 
+		if (e.altKey===true || e.ctrlkey===true || e.metaKey===true){
+			return;
+		}
+
 	    var justpressed=false;
 		if (keydownar [e.which] == null) {
 			keydownar[e.which] = setInterval(()=>checkKey(e,true),200 );			
 			justpressed=true;
-		}
-
-		if (justpressed===false){
-			if (e.keyCode == '88' || e.keyCode =='32'||e.keyCode =='13'||e.keyCode =='68'){
-				return false;
-			}
 		}
 
 		if (manual!=true &&!justpressed){
@@ -955,15 +986,15 @@ function getVal(key, default_val){
 	       // right arrow
 	    	onInput(3);
 	    	e.preventDefault();
-	    } else if (e.keyCode == '88' || e.keyCode =='32'||e.keyCode =='13'||e.keyCode =='68'){ 
+	    } else if ((e.keyCode == '88' || e.keyCode =='32'||e.keyCode =='13'||e.keyCode =='68')&&justpressed){ 
 	    //x leertaste enter
 	    	onInput(4);
 	    	e.preventDefault();
 	    } else if (e.keyCode=='90'||e.keyCode=='85'){//z or u
 	    	onInput(5);
-	    } else if (e.keyCode=='82'){//r
+	    } else if (e.keyCode=='82' && justpressed){//r
 	    	onInput(6);
-	    } else if (e.keyCode=='27'){//escape
+	    } else if (e.keyCode=='27' && justpressed){//escape
 	    	onInput(7);
 	    } else if (editmodus){
 	    	if (e.keyCode=='83'){//s
@@ -975,7 +1006,6 @@ function getVal(key, default_val){
 					level_h : level_h
 				};
 				let zustand_str = JSON.stringify(zustand_dict);
-				console.log(zustand_str);
 				alert(zustand_str+",");
 	    	} else if (e.keyCode=='78'){//n
 	    		würfeln=[];
@@ -1002,7 +1032,7 @@ function getVal(key, default_val){
 				zustandSpeichern();
 
 				renderSpiel(false);
-			} else if (e.keyCode=='189'){//-
+			} else if (e.key=="-"){//-
 				if(level>0){
 					level--;
 					ladenZustand(JSON.stringify(levels[level]));
@@ -1013,7 +1043,7 @@ function getVal(key, default_val){
 
 					renderSpiel(false);
 				}
-			} else if (e.keyCode=="187"){//+
+			} else if (e.key=="="){//+
 				if (level<levels.length-1){
 					level++;
 					ladenZustand(JSON.stringify(levels[level]));
@@ -1144,7 +1174,7 @@ function getVal(key, default_val){
                           from="0 50"
                           to="0 0"
                           dur="0.4s"
-                          repeatCount="once"/>
+                          repeatCount="1"/>
             <rect class="seite-schatten" x="17.25" y="2.25" width="62" height="50"/>
             <rect class="tbs-2" x="16.25" y="1.25" width="62" height="50"/>
             <rect class="tbs-3" x="17.25" y="2.25" width="60" height="48"/>
@@ -1284,7 +1314,6 @@ function wrapTextRect(text,font,fontgröße)
 				menü5_el.textContent="+ "+menü5_el.textContent+" +";
 				break;			
 		}
-		console.log(titeltext_el);
 	}
 
 	let titelrendered=false;
@@ -1305,7 +1334,7 @@ function wrapTextRect(text,font,fontgröße)
                           from="0 -50"
                           to="0 0"
                           dur="0.4s"
-                          repeatCount="once"/>
+                          repeatCount="1"/>
             <rect class="seite-schatten" x="17.25" y="2.25" width="62" height="50"/>
             <rect class="tbs-2" x="16.25" y="1.25" width="62" height="50"/>
             <rect class="tbs-3" x="17.25" y="2.25" width="60" height="48"/>
@@ -1574,7 +1603,6 @@ function wrapTextRect(text,font,fontgröße)
 	    x = Math.floor(x);
 	    y = Math.floor(y);
 
-	    console.log(x,y);
 
 	    if (x<0||x>=level_b || y<0||y>=level_h){
 	    	return;
@@ -1623,7 +1651,6 @@ function wrapTextRect(text,font,fontgröße)
 
 	function renderSpiel(anim_erlauben){
 
-
 		let genbg = lastlb!==level_b||lastlh!==level_h;
 
 	
@@ -1659,7 +1686,7 @@ function wrapTextRect(text,font,fontgröße)
 
 
 		let svg=`
-<svg id="svg_fg" viewBox="0 0 ${o_screen_b} ${o_screen_h}" xmlns="http://www.w3.org/2000/svg" onmousedown="klicken(event)">
+<svg id="svg_fg" viewBox="0 0 ${o_screen_b} ${o_screen_h}" xmlns="http://www.w3.org/2000/svg">
 
 <defs> 
 
@@ -1682,7 +1709,7 @@ svg+=`<animateTransform attributeName="transform"
                           from="0 50"
                           to="0 0"
                           dur="0.2s"
-                          repeatCount="once"/>
+                          repeatCount="1"/>
 `
 }
 
@@ -1706,7 +1733,7 @@ svgbg+=                `<animateTransform attributeName="transform"
                           from="0 50"
                           to="0 0"
                           dur="0.2s"
-                          repeatCount="once"/>`
+                          repeatCount="1"/>`
 }
 
 svgbg+=`                          
@@ -1758,7 +1785,7 @@ svgbg+=`
 		}
 }
 		
-
+		var animatingwürfeln=0;
 		for (let i=0;i<würfeln.length;i++){
 			let würfel=würfeln[i];
 			let wx=1+o_bildschirm_rand_x+o_bildschirm_zelle_g_b*würfel[0];
@@ -1768,7 +1795,8 @@ svgbg+=`
 
 			 if (würfel[2]===0&&anim_erlauben){
 			 	svg+=`<rect class="würfel-hg" opacity="0" x="${wx}" y="${wy}" width="${wg}" height="${wg}" rx="5">`
-				svg+=`<animate attributeName="opacity" begin="${movedur}s" from="0" to="1" dur="${fadeindur}s" fill="freeze" />`;
+				svg+=`<animate attributeName="opacity" begin="${movedur+animatingwürfeln*fadeindur}s" from="0" to="1" dur="${fadeindur}s" fill="freeze" />`;
+				// animatingwürfeln++;
 			 } else {
 			 	svg+=`<rect class="würfel-hg" x="${wx}" y="${wy}" width="${wg}" height="${wg}" rx="5">`
 			 }
@@ -1778,7 +1806,8 @@ svgbg+=`
 			// svg+=`<g class="#${entität[0]}" transform="translate(${ox},${oy})">`
 		}
 
-
+		var anywürfelnanims=false;
+		animatingwürfeln=0;
 		for (let i=0;i<würfeln.length;i++){
 			let würfel=würfeln[i];
 			let wx=1+o_bildschirm_rand_x+o_bildschirm_zelle_g_b*würfel[0];
@@ -1789,7 +1818,9 @@ svgbg+=`
 			 if (würfel[2]===0 && anim_erlauben){
 				würfel[2]=1;
 				svg+=`<rect class="würfel-umriss" x="${wx}" y="${wy}" stroke-opacity="0" width="${wg}" height="${wg}" rx="5">`
-				svg+=`<animate attributeName="stroke-opacity" begin="${movedur}s" from="0" to="1" dur="${fadeindur}s" fill="freeze" />`;
+				svg+=`<animate attributeName="stroke-opacity" begin="${movedur+animatingwürfeln*fadeindur}s" from="0" to="1" dur="${fadeindur}s" fill="freeze" />`;
+				// animatingwürfeln++;
+				anywürfelnanims=true;
 			 } else {
 				svg+=`<rect class="würfel-umriss" x="${wx}" y="${wy}" width="${wg}" stroke-opacity="1" height="${wg}" rx="5">`
 			 }
@@ -1798,8 +1829,7 @@ svgbg+=`
 			// svg+=`<g class="#${entität[0]}" transform="translate(${ox},${oy})">`
 		}
 		
-
-
+		let maxanimierendewürfelzahl=0;
 		//Entitäten
 		for (let i=0;i<entitäten.length;i++){
 			let entität=entitäten[i];
@@ -2015,24 +2045,66 @@ svgbg+=`
 				default://Auge
 
 					if (transforming && anim_erlauben){
+
+						let keytimestring="";
+						for (let i=0;i<=entität[0];i++){
+							if (i>0){
+								keytimestring+=";";
+							}
+							keytimestring+=i/entität[0];
+						}
 						svg+=`<circle class="auge_leer" cx="6" cy="6" r="3"  />`
 						svg+=`<circle class="auge_dunkelFadeIn" opacity="0" cx="6" cy="6" r="3"  >`
-          				svg+=`<animate attributeName="opacity" from="0" to="1" begin="${movedur}s" dur="${fadeindur}s" fill="freeze"></animate>`
+          				svg+=`<animate attributeName="opacity" from="0" to="1" begin="${movedur+(animatingwürfeln)*fadeindur}s" dur="${fadeindur}s" fill="freeze"></animate>`
 						svg+=`</circle>`
-						svg+=`<text x=6 y=6 class="scoretext" >`
+						for (var j=1;j<=entität[0];j++){
+
+							if (j>maxanimierendewürfelzahl){
+								maxanimierendewürfelzahl=j;
+								if (anywürfelnanims&&audio==1){
+									setTimeout(()=>sfx(0),(movedur+(animatingwürfeln+j)*fadeindur)*1000)
+								}
+							}
+							svg+=`<text x=6 y=6 class="scoretext" opacity="0">`
+							var intervallength=	fadeindur;	
+							if (j<entität[0]){
+								svg+=`<animate
+								      id="frame${j}"
+								      attributeName="opacity"
+								      begin="${movedur+(animatingwürfeln+j)*fadeindur}s"
+								      dur="${2*fadeindur}s"
+
+							      	  keyTimes="0;0.5;1"
+							      	  values="0;1;0"
+								      repeatCount="1" 
+								      fill="freeze"/>`
+							} else {
+								svg+=`<animate
+								      id="frame${j}"
+								      attributeName="opacity"
+								      begin="${movedur+(animatingwürfeln+j)*fadeindur}s"
+								      dur="${fadeindur}s"
+
+							      	  keyTimes="0;1"
+							      	  values="0;1"
+								      repeatCount="1" 
+								      fill="freeze"/>`
+
+							}
+							svg+=`${j}</text>`
+						}
 					} else {
 				svg+=`
 					<circle class="auge_dunkel" cx="6" cy="6" r="3"  />`
 						svg+=`</circle>
 						<text x=6 y=6 class="scoretext">`
+						svg+=`${entität[0]}</text>`
 					}
 
 					if (entität[5]===0){
 						entität[5]=1;
 					}
-					svg+=`${entität[0]}
-					</text>
-					`
+					
 				break;		
 			}
 
@@ -2107,7 +2179,7 @@ if (v>=0)
                           to="${modal_ox} ${modal_oy}"
                           fill="freeze"
                           dur="0.4s"
-                          repeatCount="once"/>`
+                          repeatCount="1"/>`
 	svg+=`<rect class="seite-schatten" x="${modal_x+1}" y="${modal_y+1}" width="${modal_b}" height="${modal_h}"/>   `
 	svg+=`<rect class="seite-modal" x="${modal_x}" y="${modal_y}" width="${modal_b}" height="${modal_h}"/>   `
 	svg+=`<rect class="seite-modal-innen" x="${modal_x+1}" y="${modal_y+1}" width="${modal_b-2}" height="${modal_h-2}"/>   `
@@ -2122,6 +2194,8 @@ if (v>=0)
 		svg+=`<text class="seite-modal-titel" x="${modal_x+modal_b/2}" y="10">${S("Unentschieden","A Draw")}</text>`
 		svg+=`<text class="seite-modal-text" x="${modal_x+modal_b/2}" y="20">${S("Drücken Sie R oder Z","Press R or Z")}</text>`
 	} else {
+		setTimeout(()=>sfx(1),(0.4)*1000)
+	 
 		svg+=`<text class="seite-modal-spielstand" x="${modal_x+modal_b/2}" y="2">${spielstand[0]}:${spielstand[1]}</text>`
 		svg+=`<text class="seite-modal-titel" x="${modal_x+modal_b/2}" y="10">${S("Siegreich!","You won!")}</text>`
 		svg+=`<text class="seite-modal-text" x="${modal_x+modal_b/2}" y="20">${S("(X um fortzufahren)","(X to continue)")}</text>`
@@ -2136,6 +2210,11 @@ if (v>=0)
 		document.getElementById("bgcontainer").innerHTML=svgbg;
 	}
 	document.getElementById("svgcontainer").innerHTML=svg;
+	 
+	if (editmodus){
+		document.getElementById('svg_fg').onmousedown=klicken
+	}
+
 	// document.body.innerHTML=svg;
 	}
 
@@ -2176,9 +2255,15 @@ if (v>=0)
 		if (undoZustände.length===1){
 			return;
 		}
-		undoZustände.pop();
-		let zustand_str=undoZustände[undoZustände.length-1];
-		ladenZustand(zustand_str);
+		while(undoZustände.length>=2){
+			var head = undoZustände.pop();
+			let zustand_str=undoZustände[undoZustände.length-1];
+			if (head!=zustand_str){
+				ladenZustand(zustand_str);
+				sfx(3);
+				return;
+			}
+		}
 	}
 
 	function neustart(){
@@ -2186,22 +2271,30 @@ if (v>=0)
 		if (undoZustände.length===1){
 			return;
 		}
+		if (undoZustände[0]===undoZustände[undoZustände.length-1]){
+			return;
+		}
+
+		sfx(3);
 		undoZustände.push(undoZustände[0]);
 		let zustand_str=undoZustände[undoZustände.length-1];
 		ladenZustand(zustand_str);	
 	}
 
-
+	var dolevelanim=true;
 	function winLevel(){
 		if (level+1<levels.length){
 			level++;
 			setVal("level",level);
-			setGameState("SPIEL");		
+			setGameState("SPIEL");	
+			lastlb=-1;
+			lastlh=-1;	
+			sfx(1);
+			renderSpiel(false);			
 		} else {
-			level=0;
-			setVal("level",level);
 			setGameState("TITEL");	
 		}
+
 	}
 
 	function startSpiel(){
@@ -2422,7 +2515,7 @@ function getRandomInt(min, max) {
 		audio=getVal("audio",1);
 		sprache=getVal("sprache","EN");
 		document.title = S("Augenschlepper","Pip Schlepper");
-		level=getVal("level",0);
+		level=parseInt(getVal("level",0));
 		if (level>0){
 			titelindex=1;
 		} else {
@@ -2430,7 +2523,7 @@ function getRandomInt(min, max) {
 		}
 		document.onkeydown = checkKey;	
 		document.onkeyup = onKeyup;	
-		document.onfocus = onFocus;	
+		window.onfocus = onFocus;	
 
 		setGameState("TITEL")
 
