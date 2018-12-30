@@ -341,7 +341,7 @@
 
 <script>
 
-let editmodus=false;
+let editmodus=true;
 
 let movedur=0.1;
 let fadeindur=0.15;
@@ -984,8 +984,16 @@ function getVal(key, default_val){
 		}
 	}
 
+	function onEndeInput(k){
+		if (k===4||k===7){
+			setGameState("TITEL");
+			titelindex=5;
+			render();
+		}
+	}
+
 	function onInput(k){
-		if (k===7&&gameState!=="TITEL"&&gameState!=="HILFE"&&gameState!=="CREDITS"){
+		if (k===7&&gameState!=="TITEL"&&gameState!=="HILFE"&&gameState!=="CREDITS"&&gameState!=="Ende"){
 			setGameState("TITEL");
 			return;
 		}
@@ -1001,6 +1009,9 @@ function getVal(key, default_val){
 			break;
 			case "CREDITS":
 			onCreditsInput(k);
+			break;
+			case "ENDE":
+			onEndeInput(k);
 			break;
 		}
 	}
@@ -1342,6 +1353,71 @@ function renderCredits(){
 		document.getElementById("svgcontainer").innerHTML=svg;		
 	}
 
+function renderEnde(){
+		var text = S(`
+			Herzlichen Glückwunsch!
+&nbsp;
+			Sie sind durch Ihre besondere Mühe und einzigartiges Talent einer der tipptopp 
+			ausgezeichneten Augenschleppermeister bzw. eine der tipptopp ausgezeichneten 
+			Augenschleppermeisterinnen in der Welt geworden.
+&nbsp;
+			War werden Sie als nächstes tun?		
+	`,
+	`
+			Congratulations!
+			&nbsp;
+			Through talent and effort you have become one of the most tip-top pip schleppers 
+			the world has ever wot seen.
+			&nbsp;
+			What will you do next?
+			`);
+		text=text.trim();
+		lines = text.split("\n");
+
+		let svg = "";
+		let svgbg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 97.5 57.5">
+<g id="Ebene_2" data-name="Ebene 2">
+    <g id="Ebene_5" data-name="Ebene 5">
+        <g id="TitelBildSchirm">
+                <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          from="0 50"
+                          to="0 0"
+                          dur="0.4s"
+                          repeatCount="1"/>
+            <rect class="seite-schatten" x="17.25" y="2.25" width="62" height="50"/>
+            <rect class="tbs-2" x="16.25" y="1.25" width="62" height="50"/>
+            <rect class="tbs-3" x="17.25" y="2.25" width="60" height="48"/>
+            <text id="TitelText" class="tbs-4" transform="translate(47.8 12.7)">${S("Ende des Spiels","The game's End")}</text>
+            <text class="HelpText" transform="translate(19 18) scale(0.6 0.6)">`
+            // svgbg+=text;
+            for (var i=0;i<lines.length;i++){
+            	var l = lines[i].trim();
+            	if (l===""){
+            		break;
+            	}
+            	svgbg+=`<tspan x="0" y="${5*i}">${l}</tspan>`
+            }
+            // 		<tspan id="menü1" x="0" y="0">[ NEUES SPIEL ]</tspan>
+            // 		<tspan id="menü2" x="0" y="8.24">FORTSETZEN</tspan>
+            // 		<tspan id="menü3" x="0" y="16.48">SPRACHE:DEUTSCH</tspan>
+            // 		<tspan id="menü4" x="0" y="24.48">AUDIO:EIN</tspan>
+
+        svgbg+=`</text>
+        <text id="MenuText" class="tbs-5" transform="translate(47.8 20.6) scale(0.6 0.6)">	
+        <tspan id="menü5" x="0" y="46">${S("X - Zurück","X to go back")}</tspan>	
+        </text>
+            </g>
+</g>
+</g>
+</svg>`;
+
+		document.getElementById("bgcontainer").innerHTML=svgbg;
+		document.getElementById("svgcontainer").innerHTML=svg;		
+	}
+
+
 	function render(){
 		switch(gameState){
 			case "TITEL":
@@ -1355,6 +1431,9 @@ function renderCredits(){
 				break;
 			case "CREDITS":
 				renderCredits(true);
+				break;
+			case "ENDE":
+				renderEnde(true);
 				break;
 		}
 	}
@@ -2400,7 +2479,7 @@ if (v>=0)
 			sfx(1);
 			renderSpiel(false);			
 		} else {
-			setGameState("TITEL");	
+			setGameState("ENDE");	
 		}
 
 	}
